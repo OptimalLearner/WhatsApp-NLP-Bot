@@ -43,7 +43,7 @@ def youtube():
     results = r.json()['items']
     print(results[0])
     for result in results:
-         
+          
         video_data = {
             'id' : result['id'],
             'url' : f'https://www.youtube.com/watch?v={ result["id"] }',
