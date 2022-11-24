@@ -58,6 +58,7 @@ quiz_time = False
 
 @app.route('/', methods=['POST'])
 def reply():
+    print(request.form.get('Body'))
     for k, v in (request.form).items():
         print(k, v)
     print(request.form.get('MediaContentType0'))
