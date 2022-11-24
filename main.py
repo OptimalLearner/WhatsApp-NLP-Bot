@@ -62,6 +62,7 @@ def reply():
     data_ = request.get_json()
     print(jsonify(data_))
     print(jsonify(data))
+    print(request.text)
     print(request.form.get('Body'))
     for k, v in (request.form).items():
         print(k, v)
