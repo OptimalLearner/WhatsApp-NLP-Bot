@@ -32,7 +32,7 @@ import os
 import json
 import random
 from deep_translator import GoogleTranslator
-import langid
+
 
 import langid
 #import requests to make API call
@@ -40,7 +40,7 @@ import requests
 # import dotenv for loading the environment variables
 from dotenv import load_dotenv
 # import flask for setting up the web server
-from flask import Flask, Response, request
+from flask import Flask, Response, request,jsonify
 # Extra imports
 from pymongo import MongoClient
 
@@ -58,6 +58,10 @@ quiz_time = False
 
 @app.route('/', methods=['POST'])
 def reply():
+    data = request.json
+    data_ = request.get_json()
+    print(jsonify(data_))
+    print(jsonify(data))
     print(request.form.get('Body'))
     for k, v in (request.form).items():
         print(k, v)
