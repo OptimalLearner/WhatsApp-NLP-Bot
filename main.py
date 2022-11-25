@@ -60,13 +60,29 @@ quiz_time = False
 def reply():
     data = request.json
     data_ = request.get_json()
-    print(jsonify(data_))
-    print(jsonify(data))
-    print(request.text)
-    print(request.form.get('Body'))
-    for k, v in (request.form).items():
-        print(k, v)
-    print(request.form.get('MediaContentType0'))
+    # _______________ TESTING__________________
+    
+    
+    print(request.country)
+    print(request.sourceAddress)
+    print(request.messageParameters)
+    print(request.messageParameters.text)
+    print(request.messageParameters.text.body)
+    print(request.msgStream)
+    print(request.msgSort)
+    print(request.messageId)
+    print(request.updatedDate)
+    print(request.msgStatus)
+    print(request.createdDate)
+    print(request.messageType)
+    print(request.customerId)
+    print(request.sessionLogTime)
+    print(request.recipientAddress)
+
+
+    
+    
+    #_________________________________________
     if request.form.get('MediaContentType0') is not None:
         
         print(request.form)
