@@ -63,7 +63,7 @@ def reply():
     print(jsonify(data_))
     print(jsonify(data))
     print(request.text)
-    print(request.form.get('Body'))
+    print(request.form.get('coutry'))
     for k, v in (request.form).items():
         print(k, v)
     print(request.form.get('MediaContentType0'))
