@@ -58,51 +58,19 @@ quiz_time = False
 
 @app.route('/', methods=['POST'])
 def reply():
-    data = request.json
-    data_ = request.get_json()
+   
 
     # _______________ TESTING__________________
-    print(request.form.get('country'))
-    print(request.form.to_dict)
-    print(jsonify(request={"status": 200}))
+
+#     print(request.form.to_dict)
+#     print(jsonify(request={"status": 200}))
     if request.get_data() is not None:
         print(request.get_data())
         print(request.data)
         print(json.loads(request.data))
-    if request.country is not None:
-        print(request.country)
-        print(request.form.get('country'))
-    if request.sourceAddress is not None:
-        print(request.sourceAddress)
-    if request.messageParameters is not None:
-        print(request.messageParameters)
-    if request.messageParameters.text is not None:
-        print(request.messageParameters.text)
-    if request.messageParameters.text.body is not None:
-        print(request.messageParameters.text.body)
-    if request.msgStream is not None:
-        print(request.msgStream)
-    if request.msgSort is not None:
-        print(request.msgSort)
-    if request.messageId is not None:
-        print(request.messageId)
-    if request.updatedDate is not None:
-        print(request.updatedDate)
-    if request.msgStatus is not None:
-        print(request.msgStatus)
-    if request.createdDate is not None:
-        print(request.createdDate)
-    if request.messageType is not None:
-        print(request.messageType)
-    if request.customerId is not None:
-        print(request.customerId)
-    if request.sessionLogTime is not None:
-        print(request.sessionLogTime)
-    if request.recipientAddress is not None:
-        print(request.recipientAddress)
-
-
     
+    temp = json.loads(request.data)
+    print(temp.sourceAddress)
     
     #_________________________________________
     if request.form.get('MediaContentType0') is not None:
