@@ -63,6 +63,7 @@ def reply():
 
     # _______________ TESTING__________________
     print(request.form.get('country'))
+    print(request.form.to_dict)
     if request.get_data() is not None:
         print(request.get_data())
         print(request.data)
