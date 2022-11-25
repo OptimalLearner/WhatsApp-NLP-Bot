@@ -70,7 +70,12 @@ def reply():
         print(json.loads(request.data))
     
     temp = json.loads(request.data)
-    print(temp.sourceAddress)
+    print(temp['sourceAddress'])
+    sendText(temp['sourceAddress'], "en", "What is up?")
+    print(temp.get('sourceAddress'))
+    sendText(temp.get('sourceAddress'), "en", "Nothing is up!")
+    
+    return ''
     
     #_________________________________________
     if request.form.get('MediaContentType0') is not None:
