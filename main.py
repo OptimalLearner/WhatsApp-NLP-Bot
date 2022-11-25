@@ -69,6 +69,7 @@ def reply():
         print(json.loads(request.data))
     
     temp = json.loads(request.data)
+    print(temp)
     print(temp['sourceAddress'])
     sendText(temp['sourceAddress'], "en", "What is up?")
     print(temp.get('sourceAddress'))
