@@ -56,7 +56,7 @@ app = Flask(__name__)
 quiz_time = False
 
 
-@app.route('/reply', methods=['POST'])
+@app.route('/', methods=['POST'])
 def reply():
     data = request.json
     data_ = request.get_json()
