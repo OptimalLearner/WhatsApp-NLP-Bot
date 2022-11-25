@@ -1,0 +1,371 @@
+Science:
+--------
+1) The laws of reflection hold good for
+(a) plane mirror only
+(b) concave mirror only
+(c) convex mirror only
+(d) all mirrors irrespective of their shape
+Ans. (d) all mirrors irrespective of their shape
+
+2) Light travel fastest in
+(a) Water
+(b) Air
+(c) Glass
+(d) Diamond
+Answer: (b) Air
+
+3) A substance added to food containing fats and oils is called:
+(a) Oxidant
+(b) Rancid
+(c) Coolant
+(d) Antioxidant
+Answer: (d) Antioxidant
+
+4) Roots of the plants absorb water from the soil through the process of:
+(a) diffusion
+(b) transpiration
+(c) osmosis
+(d) None of these
+Answer: (c) osmosis
+
+5) Which of the following is a logical sequence of food chain
+(a) producer → consumer → decomposer
+(b) producer → decomposer → consumer
+(c) consumer → producer → decomposer
+(d) decomposerproducer → consumer
+Answer: (a) producer → consumer → decomposer
+
+6)  In an ecosystem, herbivores represent
+(a) producers
+(b) primary consumers
+(c) secondary consumers
+(d) decomposers
+Answer: (b) primary consumers
+
+7) The arrangement of elements in the Modem Periodic Table is based on their
+(a) increasing atomic mass in the period
+(b) increasing atomic number in the horizontal rows
+(c) increasing atomic number in the vertical columns
+(d) increasing atomic mass in the group
+Answer: (b) increasing atomic number in the horizontal rows
+
+8) From the list given below pick the item that is not a natural resource [NCERT Exemplar Problems]
+(a) Soil
+(b) Water
+(c) Electricity
+(d) Air
+Answer: (c) Electricity
+
+9) How many single bonds are present in methane?
+(a) Four
+(b) Five
+(c) Six
+(d) Three
+Answer: (a) Four
+
+10) What is the pH range of our body?
+(a) 7.0 – 7.8
+(b) 7.2 – 8.0
+(c) 7.0 – 8.4
+(d) 7.2 – 8.4
+Answer: (a) 7.0 – 7.8
+
+
+
+Maths:
+-------
+
+1) Area of a triangle with base (b) and height (h) is:
+A. b.h
+B. ½ b.h
+C. 2b.h
+D. None of these
+Answer: B. ½ b.h
+
+2) Area of the square with side-length ‘a’ is:
+A. 2a
+B. 4a
+C. a/2
+D. a^2
+Answer: D. a2
+
+3. The area of a parallelogram with length (l) and breadth (b) is:
+A. ½ lb
+B. 2lb
+C. lb
+D. (lb)2
+Answer: C. lb
+
+4. Area of a circle with radius ‘r’ is:
+A. πr²
+B. ½ πr²
+C. 2πr²
+D. 4πr²
+Answer: A. πr²
+
+5. 1 cm is equal to how many millimeters?
+A. 10
+B. 100
+C. 1/10
+D. 1/100
+Answer: A. 10
+
+6. Surface area of cube of edge ‘a’ is:
+A. 4a²
+B. 6a²
+C. 3a²
+D. a²
+Answer: B. 6a²
+
+7. Volume of a cuboid of length (l), width (w) and height (h) is:
+A. lbh
+B. lb + bh + hl
+C. 2 (lb + bh + hl)
+D. 2 (l + b) h
+Answer: A. lbh
+
+8. Volume of a cylinder with base radius = r and height = h, is:
+A. 2πrh
+B. πr²h
+C. 2πr(r + h)
+D. 1/3πr²h
+Answer: B. πr²h
+
+9. 1 litre is equal to how many cubic centimeters?
+A. 10 cu.cm
+B. 100 cu.cm
+C. 1000 cu.cm
+D. 10000 cu.cm
+Answer: C. 1000 cu.cm
+
+10. The perimeter of a rectangle with length (l) and width (w) is:
+A. l+w
+B. 2(l+w)
+C. (l+w)2
+D. lw
+Answer: B. 2(l+w)
+
+11. If the length and breadth of a rectangle are 15cm and 10cm, respectively, then its area is:
+A. 100 sq.cm
+B. 150 sq.cm
+C. 115 sq.cm
+D. 200 sq.cm
+Answer: B
+
+12. The area of a rhombus whose diagonals are of lengths 10 cm and 8.2 cm is:
+A. 41 cm2
+B. 82 cm2
+C. 410 cm2
+D. 820 cm2
+Answer: A
+
+13. The area of a trapezium is 480 cm2, the distance between two parallel sides is 15 cm and one of the parallel side is 20 cm. The other parallel side is:
+A. 20 cm
+B. 34 cm
+C. 44 cm
+D. 50 cm
+Answer: C
+
+14. The area of a rhombus is 240 cm2 and one of the diagonals is 16 cm. Find the other diagonal.
+A. 16 cm
+B. 20 cm
+C. 30 cm
+D. 36 cm
+Answer: C
+
+15. A cuboid has ______ pairs of identical faces.
+A. 2
+B. 3
+C. 4
+D. 5
+Answer: B
+
+16. All six faces of a cube are:
+A. Identical
+B. Different
+C. Circular
+D. Rectangular
+Answer: A
+
+17. A cylindrical box has ____ curved surface and ____ circular faces, which are identical.
+A. One, One
+B. One, two
+C. two, one
+D. two, two
+Answer: B
+
+18. If a cuboidal box has height, length and width as 20 cm, 15 cm and 10 cm respectively. Then its total surface area is:
+A. 1100 cm2
+B. 1200 cm2
+C. 1300 cm2
+D. 1400 cm2
+Answer: C
+
+19. The height of a cylinder whose radius is 7 cm and the total surface area is 968 cm2 is:
+A. 15 cm
+B. 17 cm
+C. 19 cm
+D. 21 cm
+Answer: A
+
+20. The height of a cuboid whose volume is 275 cm3 and base area is 25 cm2 is:
+A. 10 cm
+B. 11 cm
+C. 12 cm
+D. 13 cm
+Answer: B
+
+Geography
+----------
+
+1)The India's highest annual rainfall is reported at
+(A) Namchi, Sikkim
+(B) Churu, Rajasthan
+(C) Mawsynram, Meghalaya
+(D) Chamba, Himachal Pradesh
+Answer: (C) Mawsynram, Meghalaya
+
+2)India has largest deposits of ________ in the world.
+(A) Gold
+(B) Copper
+(C) Mica
+(D) None of the above
+Answer: (C) Mica
+
+3)The southernmost point of peninsular India, that is, Kanyakumari, is
+A.north of Tropic of Cancer
+B.south of the Equator
+C.south of the Capricorn
+D.north of the Equator
+Answer: D.north of the Equator
+
+4) India has
+(A) Largest turmeric production
+(B) Largest tea production
+(C) Largest ginger production
+(D) All of the above
+Answer: (D) All of the above
+
+5)Coral reefs in India can be found in
+(A) The coast of Orissa
+(B) Waltair
+(C) Rameshwaram
+(D) Trivandrum
+Answer: (C) Rameshwaram
+
+6)The most fertile region of India is
+(A) The Himalayas
+(B) The central Highlands
+(C) The Indo-Gangetic plain
+(D) Peninsular plateau
+Answer: (C) The Indo-Gangetic plain
+
+7)When it is noon IST at Allahabad in India, the time at Greenwich, London, will be
+(A) Midnight ,GMT
+(B) 1730 hours
+(C) 0630 hours
+(D) None of the above
+Answer: (C) 0630 hours
+
+8) Which of the following types of soil are mostly confined to river basins and coastal plains of India?
+(A) Alluvial soils
+(B) Black soils
+(C) Laterite soils
+(D) Red soils
+Answer:(A) Alluvial soils
+
+9)The state having a largest area of forest cover in India is
+(A) Arunachal Pradesh
+(B) Haryana
+(C) Madhya Pradesh
+(D) Assam
+Answer: (C) Madhya Pradesh
+
+10) Which of the following groups of rivers originate from the Himachal mountains?
+(A) Beas, Ravi and Chenab
+(B) Ravi, Chenab and Jhelum
+(C) Sutlej, Beas and Ravi
+(D) Sutlej, Ravi and Jhelum
+Answer: (A) Beas, Ravi and Chenab
+
+
+
+
+
+
+
+
+{
+  "1": {
+     "question": "1 litre is equal to how many cubic centimeters",
+     "A": "10 cu.cm",
+     "B": "100 cu.cm",
+     "C": "1000 cu.cm",
+     "D": "10000 cu.cm",
+     "answer": "C"   
+  },
+  "2": {
+     "question": "The area of a trapezium is 480 cm2, the distance between two parallel sides is 15 cm and one of the parallel side is 20 cm. The other parallel side is:",
+     "A": "20 cm",
+     "B": "34 cm",
+     "C": "44 cm",
+     "D": "50 cm",
+     "answer": "C"   
+    },
+  "3": {
+     "question": "The area of a rhombus is 240 cm2 and one of the diagonals is 16 cm. Find the other diagonal.",
+     "A": "20 cm",
+     "B": "30 cm",
+     "C": "40 cm",
+     "D": "50 cm",
+     "answer": "C"   
+    },
+  "4": {
+     "question": "If a cuboidal box has height, length and width as 20 cm, 15 cm and 10 cm respectively. Then its total surface area is:",
+     "A": "1300 cm2",
+     "B": "1100 cm2",
+     "C": "1200 cm2",
+     "D": "1000 cm2",
+     "answer": "A"   
+    },
+  "5": {
+     "question": "The height of a cylinder whose radius is 7 cm and the total surface area is 968 cm2 is:",
+     "A": "11 cm",
+     "B": "13 cm",
+     "C": "14 cm",
+     "D": "15 cm",
+     "answer": "D"   
+    },   
+  "_id": "M2"    
+}
+
+
+topper notes
+class notes
+handwritten notes
+pdf
+note
+notes
+Here are required notes:
+
+book
+standard book
+book which will be referred in class
+textbook
+Here are required books: 
+
+notes and standard book
+notes and book
+notes and textbook
+both
+Notes:  https://drive.google.com/drive/folders/1S-_nT7LbMVZ5yZpL1cpo11T5TdbQKO4R                           
+Book: https://drive.google.com/drive/folders/1T3WqOV2_XSZ_8GHyDpnGQgJklGS_rph1
+
+
+From the following which batch do you wish to join ?
+Batch 1: 9am to 12pm
+Batch 2: 12:30pm to 3:30pm
+Batch 3: 4pm to 7pm
+Batch 4: 7:30pm to 10:30pm
+
+You are allotted batch $number. Here is the payment link:

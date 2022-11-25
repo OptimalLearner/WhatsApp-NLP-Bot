@@ -14,7 +14,6 @@ time_slots = {
 }
 
 # https://www.mongodb.com/docs/atlas/app-services/triggers/scheduled-triggers/
-
 def getTimeSlot():
     tomorrow_ = date.today() +  timedelta(1)
     tomorrow = tomorrow_.strftime("%Y-%m-%d")

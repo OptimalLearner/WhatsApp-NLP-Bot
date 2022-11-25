@@ -56,6 +56,32 @@ app = Flask(__name__)
 
 
 
+quiz_time = True
+
+
+resources = {
+    'books' : {
+        'math' : "https://drive.google.com/drive/folders/1T3WqOV2_XSZ_8GHyDpnGQgJklGS_rph1",
+        'science' : "https://drive.google.com/drive/folders/1UZXLGcpTeuMFwilBQ3A_gL8VyV5AT9sN",
+        'english' : "https://drive.google.com/drive/folders/1e8MfHRtU4_-kZ46MbGjjbfMfk_jJThL_",
+        'history' : "https://drive.google.com/drive/folders/1lzGR2e3FYN6NS7eZNhZ_u3jbM-jAoyEt",
+        'geography' : "https://drive.google.com/drive/folders/1lzGR2e3FYN6NS7eZNhZ_u3jbM-jAoyEt",
+        'python' : "https://drive.google.com/drive/folders/1XMq70rZBVpF3ePgb0OFQxuZMctzl4u_3",
+        'economics' : "https://drive.google.com/drive/folders/1XMq70rZBVpF3ePgb0OFQxuZMctzl4u_3",
+        'psychology' : "https://drive.google.com/drive/folders/1XMq70rZBVpF3ePgb0OFQxuZMctzl4u_3"
+    },
+    'notes' :{
+        'math' : "https://drive.google.com/drive/folders/1S-_nT7LbMVZ5yZpL1cpo11T5TdbQKO4R",
+        'science' : "https://drive.google.com/drive/folders/1XMq70rZBVpF3ePgb0OFQxuZMctzl4u_3",
+        'english' : "https://drive.google.com/drive/folders/1lzGR2e3FYN6NS7eZNhZ_u3jbM-jAoyEt",
+        'history' : "https://drive.google.com/drive/folders/1lzGR2e3FYN6NS7eZNhZ_u3jbM-jAoyEt",
+        'geography' : "https://drive.google.com/drive/folders/1lzGR2e3FYN6NS7eZNhZ_u3jbM-jAoyEt",
+        'python' : "https://drive.google.com/drive/folders/1XMq70rZBVpF3ePgb0OFQxuZMctzl4u_3",
+        'economics' : "https://drive.google.com/drive/folders/1XMq70rZBVpF3ePgb0OFQxuZMctzl4u_3",
+        'psychology' : "https://drive.google.com/drive/folders/1XMq70rZBVpF3ePgb0OFQxuZMctzl4u_3"
+    }
+}
+
 
 @app.route('/', methods=['POST'])
 def reply():
@@ -63,21 +89,21 @@ def reply():
     # _______________ TESTING__________________
     
     
-    print(request.country)
-    print(request.sourceAddress)
-    print(request.messageParameters)
-    print(request.messageParameters.text)
-    print(request.messageParameters.text.body)
-    print(request.msgStream)
-    print(request.msgSort)
-    print(request.messageId)
-    print(request.updatedDate)
-    print(request.msgStatus)
-    print(request.createdDate)
-    print(request.messageType)
-    print(request.customerId)
-    print(request.sessionLogTime)
-    print(request.recipientAddress)
+    # print(request.country)
+    # print(request.sourceAddress)
+    # print(request.messageParameters)
+    # print(request.messageParameters.text)
+    # print(request.messageParameters.text.body)
+    # print(request.msgStream)
+    # print(request.msgSort)
+    # print(request.messageId)
+    # print(request.updatedDate)
+    # print(request.msgStatus)
+    # print(request.createdDate)
+    # print(request.messageType)
+    # print(request.customerId)
+    # print(request.sessionLogTime)
+    # print(request.recipientAddress)
 
 
     
@@ -178,7 +204,60 @@ def workflow(user, request, response_df, langId):
         desiredTime = desiredTime_.split("\"")[1]
         rescheduleAppointment(response_df.query_result.intent.display_name, request.form.get('WaId'), user['langId'], desiredTime)
         return ''
+
+    if response_df.query_result.intent.display_name == 'New-Resource':
+        
+        db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'resources': 'true'}})
+
+        userCourses =  []
+        
+        if len(user['courses']) == 0:
+            db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'resources': 'false'}})
+            sendText(request.form.get('WaId'), user['langId'], "You haven't enrolled in any courses for notes ! Please Enroll in the course to get resources !")
+            return ''
+        
+        for i in range(0, len(user['courses'])):
+            if user['courses'][i]['coursePayment'] is True and user['courses'][i]['courseEndDate'] > str(date.today()):
+                # coursesRank.append(str(i + 1))
+                userCourses.append(user['courses'][i]['courseId'])
+                
+        print(userCourses)
+        if len(userCourses) == 0:
+            db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'resources': 'false'}})
+            sendText(request.form.get('WaId'), user['langId'], "You haven't enrolled in any courses for notes ! Please Enroll in the course to get resources !")
+            return ''
+        
+        sendList(request.form.get('WaId'), user['langId'], "Please choose the course for which you want resources", "Select Notes", userCourses, userCourses, None, False)
+        return ''
+    if response_df.query_result.intent.display_name == 'New-Resource - course':
+        sendThreeButton(request.form.get('WaId'), user['langId'],"Please select below which resource you want for" + request.form.get('Body'),['books','notes','both'],['Books','Notes','Both'])
+        # sendText(request.form.get('WaId'), user['langId'], "Sending you " + request.form.get('Body') + " Resources...")
+
+    if response_df.query_result.intent.display_name == 'New-Resource - course - books':
+        
+        subject_name_ = str(response_df.query_result.output_contexts[0].parameters.fields.get(
+                'subject-name'))
+        subject_name = subject_name_.split("\"")[1]
+        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name + " Books... \n"  + resources['books'][subject_name])
+
+    if response_df.query_result.intent.display_name == 'New-Resource - course - notes':
+        subject_name_ = str(response_df.query_result.output_contexts[0].parameters.fields.get(
+                'subject-name'))
+        subject_name = subject_name_.split("\"")[1]
+        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name + " Notes... \n"  + resources['notes'][subject_name])
     
+    if response_df.query_result.intent.display_name == 'New-Resource - course - both':
+        subject_name_ = str(response_df.query_result.output_contexts[0].parameters.fields.get(
+                'subject-name'))
+        subject_name = subject_name_.split("\"")[1]
+        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name + " Books... \n"  + resources['books'][subject_name])
+        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name + " Notes... \n"  + resources['notes'][subject_name])
+
+
+
+    
+
+
     if response_df.query_result.intent.display_name == 'Quiz':
         
         db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'quizBusy': 'true'}})
@@ -205,6 +284,7 @@ def workflow(user, request, response_df, langId):
         sendList(request.form.get('WaId'), user['langId'], "Please choose the course for which you want to test yourself", "Choose Quiz", userCourses, userCourses, None, False)
         return ''
     
+
     if user['quizBusy'] != 'false':
         date_format_str = '%d/%m/%Y %H:%M:%S'
         userCourses = []
@@ -373,61 +453,12 @@ def workflow(user, request, response_df, langId):
             return ''
             
         else:
-            db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'resultBusy': { 'busy':'false', 'user': ''}}})
-            sendText(request.form.get('WaId'), user['langId'], "Invalid course selection!")
-            return ''
-        return ''
-    
-    if user['UNIT-TESTING'] == '':
-        # sendTwoButton(request.form.get('WaId'), user["langId"], "Why not explore the courses we offer? \n You can also know more about us!", ["courses", "organisation"], ["Explore courses now!", "Know more about us!"])
-        # studentProgress(request.form.get('WaId'))
-        # checkProfile(request.form.get('WaId'), user['langId'],'https://www.coursera.org/user/93bf6a1a88d976c68fabeeebf253f65')
-        sendTwoButton(request.form.get('WaId'), user['langId'], "Do you want to check progress for yourself or someone else?", ["myself", "someone"], ["For Myself", "For Someone Else"])
-        return ''
-        
-        courseSelected = db["course"].find_one({'_id': 'math'})
-        
-        for i in range(0, len(user['courses'])):
-            if user['courses'][1]['courseId'] == courseSelected['_id']:
-                sendText(request.form.get('WaId'), user['langId'], "You have already enrolled in this course!")
-                return ''
-        
-        db["test"].update_one({'_id': request.form.get('WaId')}, {"$push": {'courses':
-        {
-            'courseId': courseSelected['_id'],
-            'courseType': courseSelected['courseType'],
-            'courseStartDate': str(date.today()),
-            'courseEndDate':  str(date.today() + timedelta(weeks=courseSelected['courseDuration'])),
-            'courseQuizzes': [],
-            'coursePayment': True,
-        }
-        }})
-        # print(getCourseraProfile('https://www.coursera.org/user/93bf6a1a88d976c68fabeeebf253f65'))
-        return ''
-    
-    if response_df.query_result.intent.display_name == 'Videos':
-        result_videos = youtube(response_df.query_result.query_text)
-        print(result_videos)
-        for video in result_videos:
-            sendText(request.form.get('WaId'), langId, video['url'] + ' | ' + video['title'])
-        return ''
-    
-    if response_df.query_result.intent.display_name == 'WebSearch':  # Google JEE datde
-        result_search = google_search(response_df.query_result.query_text)
-        sendText(request.form.get('WaId'), langId, result_search)
-    
-    else:
-        # quiz_bot(db, 'M1')
-        now = datetime.datetime.now()
-        print(now.year, now.month, now.day,now.hour, now.minute, now.second)
-        print(type(now.year), type(now.month), type(now.day),type(now.hour), type(now.minute), type(now.second))
-        print(request.form.get('From'))
-        # send_message(request.form.get('From'), response_df.query_result.fulfillment_text,'')
-        print(response_df.query_result.fulfillment_text)
-        print(response_df.query_result.intent.display_name)
-        print(request.form)
-        sendText(request.form.get('WaId'),user['langId'], response_df.query_result.fulfillment_text)
-    
+            # quiz_bot(db, 'M1')
+            now = datetime.datetime.now()
+            print(now.year, now.month, now.day, now.hour, now.minute, now.second)
+            print(type(now.year), type(now.month), type(now.day), type(now.hour), type(now.minute), type(now.second))
+            send_message(response_df.query_result.fulfillment_text,'')
+            
     return ''
 
 
