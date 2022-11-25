@@ -56,7 +56,7 @@ app = Flask(__name__)
 quiz_time = False
 
 
-@app.route('/', methods=['POST'])
+@app.route('/reply', methods=['POST'])
 def reply():
     data = request.json
     data_ = request.get_json()
@@ -66,8 +66,10 @@ def reply():
     if request.get_data() is not None:
         print(request.get_data())
         print(request.data)
+        print(json.loads(request.data))
     if request.country is not None:
         print(request.country)
+        print(request.form.get('country'))
     if request.sourceAddress is not None:
         print(request.sourceAddress)
     if request.messageParameters is not None:
