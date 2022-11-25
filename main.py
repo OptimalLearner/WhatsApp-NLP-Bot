@@ -74,6 +74,79 @@ def reply():
     sendText(temp['sourceAddress'], "en", "What is up?")
     print(temp.get('sourceAddress'))
     sendText(temp.get('sourceAddress'), "en", "Nothing is up!")
+
+    # if "order" in temp["messageParameters"]:
+    #     WaId = temp["sourceAddress"]
+    #     if len(temp["product_items"]) < 1:
+    #         print('No Course Selected')
+    #         sendText(WaId,'en',"No Course Selected")
+    #         pass
+    #     else:
+    #         # fetch coursera id of current user
+    #         userInfo = db['test'].find_one({'_id': WaId})
+    #         print(userInfo)
+    #         if "courseraId" not in userInfo or userInfo["courseraId"] != '':
+    #             print('Coursera Id Not There')
+    #             sendText(WaId,'en',"Coursera Link Not Set")
+    #             # send message to add coursera id of the user
+    #             pass
+    #         else:
+    #             # Get Requested Courses from cart
+    #             requestedCourses = temp["product_items"]
+    #             alreadyRegisteredCourses = [x["courseId"] for x in userInfo["courses"]]
+    #             print("already registered", alreadyRegisteredCourses)
+    #             alreadyRegisteredFlag = 0
+
+    #             courseDetails = []
+    #             totalFees = 0
+
+    #             for item in requestedCourses:
+    #                 retail_id = item["product_retailer_id"]
+    #                 print(retail_id)
+
+    #                 courseData = db['course'].find_one({"catalogProductId": retail_id})
+    #                 print("course data")
+    #                 print(courseData)
+
+    #                 # check if alredy paid or not
+    #                 if courseData["_id"] in alreadyRegisteredCourses:
+    #                     alreadyRegisteredFlag = 1
+    #                     break
+    #                 else:
+    #                     today = date.today()
+                        
+    #                     if courseData["courseType"] == "static":
+    #                         courseTemp = {
+    #                             "courseId": courseData["_id"],
+    #                             "courseType": "static",
+    #                             "courseFees": courseData["courseFees"],
+    #                             "courseStartDate": today,
+    #                             "courseEndDate": today + timedelta(weeks=courseData["courseDuration"]),
+    #                             "quanitity": item["quantity"]
+    #                         }
+    #                     else:
+    #                         courseTemp = {
+    #                             "courseId": courseData["_id"],
+    #                             "courseType": "dynamic",
+    #                             "courseFees": courseData["courseFees"],
+    #                             "courseStartDate": courseData["CourseStart"],
+    #                             "courseEndDate": courseData["CourseEnd"],
+    #                             "quanitity": item["quantity"]
+    #                         }
+    #                     courseDetails.append(courseTemp)
+    #                     totalFees += courseData["courseFees"]
+                
+    #             print("Course Details")
+    #             print(courseDetails)
+
+                
+    #             if alreadyRegisteredFlag == 1:
+    #                 # course already registered message to user
+    #                 print('course already registered message to user')
+    #                 sendText(WaId,'en',"Course(s) already registered by the user once")
+    #             else:
+    #                 # send payment link
+    #                 sendText(WaId,'en',"http://localhost:5000/register-for-course/"+WaId)
     
     return ''
     
