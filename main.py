@@ -15,6 +15,8 @@ from utils.schedule import bookTimeSlot
 from utils.reschedule import rescheduleAppointment
 from utils.checkProfile import checkProfile
 from utils.quizPicture import getQuizPicture
+from utils.imgMedia import imgToText
+
 
 from api.text import sendText
 from api.quizButtons import sendQuiz
@@ -24,6 +26,8 @@ from api.threeButton import sendThreeButton
 from api.list import sendList
 from api.courseraProfile import getCourseraProfile
 from api.quizTemplate import sendQuizQuestion
+from api.downloadMedia import getMedia
+
 
 # Extra imports
 from pymongo import MongoClient
@@ -36,6 +40,9 @@ import random
 from deep_translator import GoogleTranslator
 import langid
 from datetime import date, timedelta, datetime
+import io 
+import base64
+from PIL import Image
 
 # import requests to make API call
 import requests
@@ -84,7 +91,70 @@ def reply():
 
     
     
-    #_________________________________________
+    #____________________NEW REQUEST CHANGES         ______
+
+
+    
+    request_data = json.loads(request.data)
+    # if request_data.get('sourceCountry') is not None:
+    #     return ''
+    
+    print(request_data)
+    if "businessId" not in request_data:
+        return ''
+    
+    if 'image' in request_data['message']:
+        WaId = request_data['from']
+        mediaId = request_data['message']['image']['id']
+        bytes_data = getMedia(mediaId)
+        b = base64.b64decode(bytes_data.encode())
+        img = Image.open(io.BytesIO(b))
+        img_type = request_data['message']['image']['mime-type']
+        img_type = img_type[img_type.index("/") + len("/"):]
+        img.save('Working.' + img_type)
+        textFromImage = imgToText('Working.' + img_type)
+        print(textFromImage)
+        print(google_search(textFromImage))
+        sendText(request_data['from'],'en',"This is what we have found ....")
+        sendText(request_data['from'],'en',google_search(textFromImage))
+        #     fp.write(response.content)
+        #     fp.close()
+        
+
+        # response = requests.get(request.form.get('MediaUrl0'))
+        # if response.status_code:
+        #     fp = open('client_Image.jpg', 'wb')
+        #     fp.write(response.content)
+        #     fp.close()
+        textFromImage = imgToText('Working.' + img_type)
+        langId = 'en'
+        # if langid.classify(textFromImage) is None:
+        #     langId = 'en'
+        # langId = langid.classify(textFromImage)[0]
+        
+        print(textFromImage)
+        print(google_search(textFromImage))
+        sendText(request_data['from'],'en',"This is what we have found ....")
+        sendText(request_data['from'],'en',google_search(textFromImage))
+        return ''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#________________________________________________NEW REQ CHANGES END__________________
+
 
     message_ = request.form.get('Body')
     print(request.form)
