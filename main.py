@@ -106,10 +106,14 @@ def reply():
     if 'image' in request_data['message']:
         WaId = request_data['from']
         mediaId = request_data['message']['image']['id']
-        bytes_data = getMedia(mediaId)
+        print(mediaId)
+        bytes_data = getMedia(mediaId)["bytes"]
+        print(bytes_data)
         b = base64.b64decode(bytes_data.encode())
+        print(b)
         img = Image.open(io.BytesIO(b))
         img_type = request_data['message']['image']['mime-type']
+        print(img_type)
         img_type = img_type[img_type.index("/") + len("/"):]
         img.save('Working.' + img_type)
         textFromImage = imgToText('Working.' + img_type)
@@ -119,7 +123,6 @@ def reply():
         sendText(request_data['from'],'en',google_search(textFromImage))
         #     fp.write(response.content)
         #     fp.close()
-        
 
         # response = requests.get(request.form.get('MediaUrl0'))
         # if response.status_code:
@@ -292,6 +295,7 @@ def workflow(user, request, response_df, langId):
        
         sendText(request_data['from'], user['langId'], "Sending you " + subject_name  + " Notes... \n"  + db['course'].find_one({'_id': subject_name})['courseNotes'] )
         db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
+        return ''
     if response_df.query_result.intent.display_name == 'New-Resource - course - both':
 
         subject_name = db['test'].find_one({'_id': request_data['from']})['resource']
@@ -299,7 +303,7 @@ def workflow(user, request, response_df, langId):
         sendText(request_data['from'], user['langId'], "Sending you " + subject_name  + " Books... \n"  + db['course'].find_one({'_id': subject_name})['courseBook'] )
         sendText(request_data['from'], user['langId'], "Sending you " + subject_name + " Notes... \n"  + db['course'].find_one({'_id': subject_name})['courseBook'] )
         db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
-
+        return ''
     if response_df.query_result.intent.display_name == 'Quiz':
         
         db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': 'true'}})
