@@ -67,7 +67,7 @@ def reply():
     if request.get_data() is not None:
         print("Inside Request json loads data")
         print(json.loads(request.data))
-    
+    global request_data
     request_data = json.loads(request.data)
     # if request_data.get('sourceCountry') is not None:
     #     return ''
@@ -269,14 +269,14 @@ def reply():
     print("HELLLLLOCOCOCOCOCO")
     # message = request_data['message']['text']['body'].lower()
     if quiz_time and quiz_count == 0:
-        quiz_initial(user, quiz_count)
+        quiz_initial(user, quiz_count,request_data)
         return ''
 
-    workflow(user, request, response_df)
+    workflow(user, request_data, response_df)
     return ''
 
 
-def quiz_initial(user, quiz_count):
+def quiz_initial(user, quiz_count,request_data):
     quiz_count = quiz_count + 1
     quiz_bot2(db, 'M1', quiz_count)
     db['test'].update_one({'_id': request_data['from']}, {"$set": {'quiz_count': quiz_count}})
@@ -321,7 +321,7 @@ def quiz_chat(user, user_answer):
         return ''
 
 
-def workflow(user, request, response_df):
+def workflow(user, request_data, response_df):
     global quiz_time
     if quiz_time:
         # user = db['test'].find_one({'_id': request_data['from']})
@@ -391,7 +391,7 @@ def workflow(user, request, response_df):
             # send_message(request.form.get('From'), response_df.query_result.fulfillment_text,'')
             print(response_df.query_result.fulfillment_text)
             print(response_df.query_result.intent.display_name)
-            # print(request.form)
+            print(request.form)
             sendText(request_data['from'], user['langId'], response_df.query_result.fulfillment_text)
 
     return ''
