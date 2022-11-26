@@ -52,8 +52,7 @@ razorpay_secret = os.environ['RAZORPAY_KEY_SECRET']
 
 # creating the Flask object
 app = Flask(__name__)
-
-
+app.secret_key = b'delph@!#78d%'
 
 quiz_time = False
 
@@ -149,7 +148,7 @@ def reply():
                     sendText(WaId,'en',"Course(s) already registered by the user once")
                 else:
                     # send payment link
-                    sendText(WaId,'en',"http://localhost:5000/register-for-course/"+WaId)
+                    sendText(WaId,'en',"https://vikings.onrender.com//register-for-course/"+WaId)
                     cartFlag = db["cart"].find_one({'_id': WaId})
                     if cartFlag is not None:
                         db["cart"].delete_one({'_id': WaId})
@@ -431,8 +430,7 @@ def form(WaId):
     offers = userInfo["offersAvailed"]
     print(offers)
     for o in offers:
-        if o["discountRedemmed"] == "false":
-            print("hehehehes")
+        if o["discountRedeemed"] == "false":
             discountPercent = db['discounts'].find_one({'_id': o["discountId"]})
             offersAvailable.append(str(o["discountId"]) + ' - ' + str(int((1-float(discountPercent["discountOffered"]))*100)) + "%")
 
@@ -459,7 +457,12 @@ def pay():
             return 'Cart Empty'
 
         offer = request.form['offers']
-        offer = offer.split(' - ')[1][:-1]
+        if offer == "none":
+            session['offer'] = 'None'
+            offer = 1
+        else:
+            session['offer'] = offer.split(' - ')[0]
+            offer = offer.split(' - ')[1][:-1]
         discountAmount = totalFees*int(offer)/100
         offer = 1 - int(offer)/100
         print('offer', offer)
@@ -473,7 +476,7 @@ def pay():
             'contact': WaId,
             'totalFees': totalFees,
             'discountAmount': discountAmount,
-            'offer': request.form['offers'],
+            'offer': offer,
             'feesToBePaid': feesToBePaid
         }
 
@@ -533,15 +536,23 @@ def success():
 
         db["cart"].delete_one({'_id': WaId})
 
+        print('session offer', session['offer'])
+
+        if session['offer'] != 'None':
+            db['test'].update_one({'_id': WaId, 'offersAvailed.discountId': session['offer']}, {'$set': {'offersAvailed.$[offersAvailed].discountRedeemed': "true"}}, array_filters=[{"offersAvailed.discountId": {"$eq": session['offer']}}], upsert=True)
+            print('update done')              
+
         wa_message = ''
         if len(messageCourse) != 0:
-            wa_message = ', '.join(messageCourse) + ' are static courses. You can attempt quizzes for such courses and bag rewards! Use Quiz me for example!\n'
+            wa_message = ', '.join(messageCourse) + ' are static courses.\nYou can attempt quizzes for such courses and bag rewards! Use *Quiz me* for example!\n\n'
 
-        wa_message += 'You can also check for progress of individual courses! Text Progress me for example!'
+        wa_message += 'You can also check for progress of individual courses!\nText *Progress me* for example!'
         sendText(WaId,'en', wa_message)
+
+        # pop all sessions
 
         return render_template('success.html', payment_id=request.form['razorpay_payment_id'], contact=session["contact"], email = userInfo["email"], amount=session["amount"])
         
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)

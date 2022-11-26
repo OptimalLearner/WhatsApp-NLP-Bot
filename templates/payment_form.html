@@ -33,8 +33,8 @@
             </div>
             <div>
                 <label for="course_name"> COURSE SELECTED </label>
-                <select name="offers" class="offers" required>
-                    <option value="" disabled selected hidden> Select the discount coupons you want to apply </option>
+                <select name="offers" class="offers">
+                    <option value="none"> Select the discount coupons you want to apply </option>
                     {%for i in range(offersLen)%}
                         <option value="{{offers[i]}}">{{offers[i]}} </option>
                     {%endfor%}
