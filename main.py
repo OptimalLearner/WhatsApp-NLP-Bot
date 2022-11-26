@@ -84,7 +84,7 @@ def reply():
             # fetch coursera id of current user
             userInfo = db['test'].find_one({'_id': WaId})
             print(userInfo)
-            if "courseraId" not in userInfo or userInfo["courseraId"] != '':
+            if userInfo["courseraId"] == '':
                 print('Coursera Id Not There')
                 sendText(WaId,'en',"Coursera Link Not Set")
                 # send message to add coursera id of the user
@@ -119,18 +119,18 @@ def reply():
                                 "courseId": courseData["_id"],
                                 "courseType": "static",
                                 "courseFees": courseData["courseFees"],
-                                "courseStartDate": today,
-                                "courseEndDate": today + timedelta(weeks=courseData["courseDuration"]),
-                                "quanitity": item["quantity"]
+                                "courseStartDate": str(today),
+                                "courseEndDate": str(today + timedelta(weeks=courseData["courseDuration"])),
+                                "quantity": item["quantity"]
                             }
                         else:
                             courseTemp = {
                                 "courseId": courseData["_id"],
                                 "courseType": "dynamic",
                                 "courseFees": courseData["courseFees"],
-                                "courseStartDate": courseData["CourseStart"],
-                                "courseEndDate": courseData["CourseEnd"],
-                                "quanitity": item["quantity"]
+                                "courseStartDate": courseData["courseStart"],
+                                "courseEndDate": courseData["courseEnd"],
+                                "quantity": item["quantity"]
                             }
                         courseDetails.append(courseTemp)
                         totalFees += courseData["courseFees"]
@@ -146,6 +146,16 @@ def reply():
                 else:
                     # send payment link
                     sendText(WaId,'en',"http://localhost:5000/register-for-course/"+WaId)
+                    cartFlag = db["cart"].find_one({'_id': WaId})
+                    if cartFlag is not None:
+                        db["cart"].delete_one({'_id': WaId})
+
+                    db['cart'].insert_one({
+                        '_id': WaId,
+                        'courseDetails': courseDetails,
+                        'totalFees': totalFees
+                    })
+                    print("finally the end")
         return ''
     
     #_________________________________________
