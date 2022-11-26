@@ -94,7 +94,7 @@ def reply():
     #____________________NEW REQUEST CHANGES         ______
 
 
-    
+    global request_data
     request_data = json.loads(request.data)
     # if request_data.get('sourceCountry') is not None:
     #     return ''
@@ -156,7 +156,7 @@ def reply():
 #________________________________________________NEW REQ CHANGES END__________________
 
 
-    message_ = request.form.get('Body')
+    message_ = request_data['message']['text']['body']
     print(request.form)
     langId = langid.classify(message_)[0]
     if langId != 'en':
@@ -166,11 +166,11 @@ def reply():
         message = message_
     response_df = dialogflow_query(message)
 
-    user = db['test'].find_one({'_id': request.form.get('WaId')})
+    user = db['test'].find_one({'_id': request_data['from']})
 
     if user == None and response_df.query_result.intent.display_name != 'Register' and response_df.query_result.intent.display_name != 'Organisation':
         # send button to register
-        # sendTwoButton(request.form.get('WaId'), "Welcome to our world of education", "register", "I want to register right now!", "surf",  "I am just here to surf and explore!")
+        # sendTwoButton(request_data['from'], "Welcome to our world of education", "register", "I want to register right now!", "surf",  "I am just here to surf and explore!")
         welcome_text = ["Welcome to our world of education",
                         "It's a better place if you register today!",
                         "Trust me! Registering with us will brighten your future",
@@ -178,22 +178,22 @@ def reply():
         print(message)
         # print(response_df.query_result.language_code)
 
-        sendTwoButton(request.form.get('WaId'), langId, welcome_text[random.randint(
+        sendTwoButton(request_data['from'], langId, welcome_text[random.randint(
             0, 3)], ["register", "roam"], ["Register right now!", "Just exploring!"])
         return ''
 
     if user == None and (response_df.query_result.intent.display_name == 'Register' or response_df.query_result.intent.display_name == 'Register-Follow'):
         db["test"].insert_one({'_id': request.form.get(
             'WaId'), 'name': '', 'email': '', 'langId': langId})
-        sendText(request.form.get('WaId'), langId,response_df.query_result.fulfillment_text)
+        sendText(request_data['from'], langId,response_df.query_result.fulfillment_text)
         return ''
 
     if user == None and response_df.query_result.intent.display_name == 'Organisation':
-        organisationIntroduction(request.form.get('WaId'), langId)
+        organisationIntroduction(request_data['from'], langId)
         return ''
 
     if user == None and response_df.query_result.intent.display_name == 'Organisation - history' or response_df.query_result.intent.display_name == 'Organisation - vision' or response_df.query_result.intent.display_name == 'Organisation - visit':
-        sendText(request.form.get('WaId'), langId, response_df.query_result.fulfillment_text)
+        sendText(request_data['from'], langId, response_df.query_result.fulfillment_text)
         return ''
 
     if user != None and (response_df.query_result.intent.display_name == 'Register' or response_df.query_result.intent.display_name == 'Register-Follow'):
@@ -201,8 +201,8 @@ def reply():
             name_ = str(response_df.query_result.output_contexts[0].parameters.fields.get(
                 'person.original'))
             name = name_.split("\"")[1]
-            db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'name': name}})
-            sendText(request.form.get('WaId'), user['langId'], response_df.query_result.fulfillment_text)
+            db['test'].update_one({'_id': request_data['from']}, { "$set": {'name': name}})
+            sendText(request_data['from'], user['langId'], response_df.query_result.fulfillment_text)
             return ''
 
         elif user['email'] == '':
@@ -210,10 +210,10 @@ def reply():
                 'email.original'))
             email = email_.split("\"")[1]
             # emailUnique = db['test'].create_index([("email", pymongo.ASCENDING)], unique=True,)
-            db['test'].update_many({'_id': request.form.get('WaId')}, {"$set": {'email': email.lower(), 'courses': [], 'courseraId': '', 'offersAvailed': [], 'UNIT-TESTING': ''}})
+            db['test'].update_many({'_id': request_data['from']}, {"$set": {'email': email.lower(), 'courses': [], 'courseraId': '', 'offersAvailed': [], 'UNIT-TESTING': ''}})
             # email.clear()
             # print('FINSIHEDDD ' + finishedRegistration)
-            sendText(request.form.get('WaId'),user['langId'], response_df.query_result.fulfillment_text)
+            sendText(request_data['from'],user['langId'], response_df.query_result.fulfillment_text)
             return ''
 
     # if user != None and (response_df.query_result.intent.display_name == 'Register' or response_df.query_result.intent.display_name == 'Register-Follow'):
@@ -227,39 +227,39 @@ def workflow(user, request, response_df, langId):
     print(response_df.query_result.intent.display_name)
 
     if response_df.query_result.intent.display_name == 'Organisation':
-        organisationIntroduction(request.form.get('WaId'), user['langId'])
+        organisationIntroduction(request_data['from'], user['langId'])
         return ''
     
     if response_df.query_result.intent.display_name == 'Organisation - history' or response_df.query_result.intent.display_name == 'Organisation - vision' or response_df.query_result.intent.display_name == 'Organisation - visit':
-        sendText(request.form.get('WaId'), user['langId'], response_df.query_result.fulfillment_text)
+        sendText(request_data['from'], user['langId'], response_df.query_result.fulfillment_text)
         return ''
     
     if response_df.query_result.intent.display_name == 'Schedule':
         timeSlots = getTimeSlot()
         print(timeSlots)
-        sendList(request.form.get('WaId'), user["langId"], "Please choose your preferred time for tomorrow!", "Free slots tomorrow!", timeSlots, timeSlots, None, True)
+        sendList(request_data['from'], user["langId"], "Please choose your preferred time for tomorrow!", "Free slots tomorrow!", timeSlots, timeSlots, None, True)
         return ''
     
     if response_df.query_result.intent.display_name == 'Schedule - time':
-        bookTimeSlot(request.form.get('Body'), request.form.get('WaId'), user['langId'])
+        bookTimeSlot(request_data['message']['text']['body'], request_data['from'], user['langId'])
         return ''
     
     if response_df.query_result.intent.display_name == 'Schedule - time - yes' or response_df.query_result.intent.display_name == 'Schedule - time - no':
         desiredTime_ = str(
             response_df.query_result.output_contexts[0].parameters.fields.get('time.original'))
         desiredTime = desiredTime_.split("\"")[1]
-        rescheduleAppointment(response_df.query_result.intent.display_name, request.form.get('WaId'), user['langId'], desiredTime)
+        rescheduleAppointment(response_df.query_result.intent.display_name, request_data['from'], user['langId'], desiredTime)
         return ''
 
     if response_df.query_result.intent.display_name == 'New-Resource':
         
-        db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'resource': 'true'}})
+        db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'true'}})
 
         userCourses =  []
         
         if len(user['courses']) == 0:
-            db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'resource': 'false'}})
-            sendText(request.form.get('WaId'), user['langId'], "You haven't enrolled in any courses for notes ! Please Enroll in the course to get resource !")
+            db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
+            sendText(request_data['from'], user['langId'], "You haven't enrolled in any courses for notes ! Please Enroll in the course to get resource !")
             return ''
         
         for i in range(0, len(user['courses'])):
@@ -269,47 +269,47 @@ def workflow(user, request, response_df, langId):
                 
         print(userCourses)
         if len(userCourses) == 0:
-            db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'resource': 'false'}})
-            sendText(request.form.get('WaId'), user['langId'], "You haven't enrolled in any courses for notes ! Please Enroll in the course to get resource !")
+            db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
+            sendText(request_data['from'], user['langId'], "You haven't enrolled in any courses for notes ! Please Enroll in the course to get resource !")
             return ''
         
-        sendList(request.form.get('WaId'), user['langId'], "Please choose the course for which you want resource", "Select Courses", userCourses, userCourses, None, False)
+        sendList(request_data['from'], user['langId'], "Please choose the course for which you want resource", "Select Courses", userCourses, userCourses, None, False)
         return ''
     if response_df.query_result.intent.display_name == 'New-Resource - course':
-        db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'resource': request.form.get('Body')}})
-        sendThreeButton(request.form.get('WaId'), user['langId'],"Please select below which resource you want for" + request.form.get('Body'),['books','notes','both'],['Books','Notes','Both'])
-        # sendText(request.form.get('WaId'), user['langId'], "Sending you " + request.form.get('Body') + " Resource...")
+        db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': request_data['message']['text']['body']}})
+        sendThreeButton(request_data['from'], user['langId'],"Please select below which resource you want for" + request_data['message']['text']['body'],['books','notes','both'],['Books','Notes','Both'])
+        # sendText(request_data['from'], user['langId'], "Sending you " + request_data['message']['text']['body'] + " Resource...")
 
     if response_df.query_result.intent.display_name == 'New-Resource - course - books':
-        subject_name = db['test'].find_one({'_id': request.form.get('WaId')})['resource']
+        subject_name = db['test'].find_one({'_id': request_data['from']})['resource']
         
-        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name  + " Books... \n"  + db['course'].find_one({'_id': subject_name})['courseBook'] )
+        sendText(request_data['from'], user['langId'], "Sending you " + subject_name  + " Books... \n"  + db['course'].find_one({'_id': subject_name})['courseBook'] )
 
 
     if response_df.query_result.intent.display_name == 'New-Resource - course - notes':
 
-        subject_name = db['test'].find_one({'_id': request.form.get('WaId')})['resource']
+        subject_name = db['test'].find_one({'_id': request_data['from']})['resource']
        
-        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name  + " Notes... \n"  + db['course'].find_one({'_id': subject_name})['courseNotes'] )
+        sendText(request_data['from'], user['langId'], "Sending you " + subject_name  + " Notes... \n"  + db['course'].find_one({'_id': subject_name})['courseNotes'] )
 
     if response_df.query_result.intent.display_name == 'New-Resource - course - both':
 
-        subject_name = db['test'].find_one({'_id': request.form.get('WaId')})['resource']
+        subject_name = db['test'].find_one({'_id': request_data['from']})['resource']
 
-        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name  + " Books... \n"  + db['course'].find_one({'_id': subject_name})['courseBook'] )
-        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name + " Notes... \n"  + db['course'].find_one({'_id': subject_name})['courseBook'] )
+        sendText(request_data['from'], user['langId'], "Sending you " + subject_name  + " Books... \n"  + db['course'].find_one({'_id': subject_name})['courseBook'] )
+        sendText(request_data['from'], user['langId'], "Sending you " + subject_name + " Notes... \n"  + db['course'].find_one({'_id': subject_name})['courseBook'] )
 
 
     if response_df.query_result.intent.display_name == 'Quiz':
         
-        db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'quizBusy': 'true'}})
+        db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': 'true'}})
         
         # coursesRank = []
         userCourses =  []
         
         if len(user['courses']) == 0:
-            db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'quizBusy': 'false'}})
-            sendText(request.form.get('WaId'), user['langId'], "You haven't enrolled in any courses that contain quizzes. Why not explore more quizzes right now!")
+            db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': 'false'}})
+            sendText(request_data['from'], user['langId'], "You haven't enrolled in any courses that contain quizzes. Why not explore more quizzes right now!")
             return ''
         
         for i in range(0, len(user['courses'])):
@@ -319,11 +319,11 @@ def workflow(user, request, response_df, langId):
                 
         print(userCourses)
         if len(userCourses) == 0:
-            db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'quizBusy': 'false'}})
-            sendText(request.form.get('WaId'), user['langId'], "You haven't enrolled in any courses that contain quizzes. Why not explore more quizzes right now!")
+            db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': 'false'}})
+            sendText(request_data['from'], user['langId'], "You haven't enrolled in any courses that contain quizzes. Why not explore more quizzes right now!")
             return ''
         
-        sendList(request.form.get('WaId'), user['langId'], "Please choose the course for which you want to test yourself", "Choose Quiz", userCourses, userCourses, None, False)
+        sendList(request_data['from'], user['langId'], "Please choose the course for which you want to test yourself", "Choose Quiz", userCourses, userCourses, None, False)
         return ''
     
 
@@ -337,9 +337,9 @@ def workflow(user, request, response_df, langId):
                 
         if user['quizBusy'] == 'true':
             
-            if request.form.get('Body') in userCourses: 
+            if request_data['message']['text']['body'] in userCourses: 
             
-                courseChosen = db["course"].find_one({ '_id': request.form.get('Body') })
+                courseChosen = db["course"].find_one({ '_id': request_data['message']['text']['body'] })
                 courseChosenName = courseChosen['_id']
 
                 index  = -1
@@ -353,7 +353,7 @@ def workflow(user, request, response_df, langId):
                 quizChosen = db["questions"].find_one({ '_id': quizId})
 
                 if quizNumber == len(user['courses'][index]['courseQuizzes']):
-                    db['test'].update_one({'_id': request.form.get('WaId'), 'courses.courseId':courseChosenName}, {'$push': {'courses.$.courseQuizzes': {
+                    db['test'].update_one({'_id': request_data['from'], 'courses.courseId':courseChosenName}, {'$push': {'courses.$.courseQuizzes': {
                         'quizId': quizId,
                         'quizStart': datetime.now().strftime(date_format_str),
                         'quizMarks':[],
@@ -361,25 +361,25 @@ def workflow(user, request, response_df, langId):
                     }}})
 
                 quizOptions = []
-                updatedUser = db['test'].find_one({'_id': request.form.get('WaId')})
+                updatedUser = db['test'].find_one({'_id': request_data['from']})
                 questionNumber_ = len(updatedUser['courses'][index]['courseQuizzes'][quizNumber]['quizMarks']) + 1
                 questionNumber = str(len(updatedUser['courses'][index]['courseQuizzes'][quizNumber]['quizMarks']) + 1)
                 quizOptions = [quizChosen[questionNumber]['A'], quizChosen[questionNumber]['B'], quizChosen[questionNumber]['C']]
 
                 quizBusy = str(index) +'-'+str(quizNumber)+'-'+quizId+'-'+questionNumber
-                db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'quizBusy': quizBusy}})
+                db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': quizBusy}})
                 quizImageId = getQuizPicture(quizChosen[questionNumber]['image'])
 
-                sendQuizQuestion(request.form.get('WaId'), user['langId'], quizChosen[questionNumber]['question'], quizOptions, quizImageId)
+                sendQuizQuestion(request_data['from'], user['langId'], quizChosen[questionNumber]['question'], quizOptions, quizImageId)
 
                 return ''
             
             else:
-                db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'quizBusy': 'false'}})
-                sendText(request.form.get('WaId'), user['langId'], "Invalid selection of course! The quiz has terminated. Please try again!")
+                db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': 'false'}})
+                sendText(request_data['from'], user['langId'], "Invalid selection of course! The quiz has terminated. Please try again!")
                 return ''
 
-        if request.form.get('Body') in ['A', 'B', 'C']:
+        if request_data['message']['text']['body'] in ['A', 'B', 'C']:
             
             index = int(user['quizBusy'].split("-")[0])
             quizNumber = int(user['quizBusy'].split("-")[1])
@@ -389,23 +389,23 @@ def workflow(user, request, response_df, langId):
             markPerQuestion = int(quizChosen['quizMarks'] / quizChosen['quizCount'])
             if int(questionNumber) >= quizChosen['quizCount']:
                 if len(user['courses'][index]['courseQuizzes'][quizNumber]['quizMarks']) + 1 ==  (quizChosen['quizCount']) and int(questionNumber) == quizChosen['quizCount']:
-                    if request.form.get('Body') == quizChosen[questionNumber]['answer']:
+                    if request_data['message']['text']['body'] == quizChosen[questionNumber]['answer']:
                         
-                        db['test'].update_one({'_id': request.form.get('WaId'), 'courses.courseQuizzes.quizId':quizId}, {'$push': {'courses.$.courseQuizzes.$[].quizMarks': markPerQuestion}})
-                        db['test'].update_one({'_id': request.form.get('WaId'), 'courses.courseQuizzes.quizId':quizId}, {'$set': {'courses.$.courseQuizzes.$[].quizEnd': datetime.now().strftime(date_format_str)}})
+                        db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$push': {'courses.$.courseQuizzes.$[].quizMarks': markPerQuestion}})
+                        db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$set': {'courses.$.courseQuizzes.$[].quizEnd': datetime.now().strftime(date_format_str)}})
 
                     else:
-                        db['test'].update_one({'_id': request.form.get('WaId'), 'courses.courseQuizzes.quizId':quizId}, {'$push': {'courses.$.courseQuizzes.$[].quizMarks': 0}})
-                        db['test'].update_one({'_id': request.form.get('WaId'), 'courses.courseQuizzes.quizId':quizId}, {'$set': {'courses.$.courseQuizzes.$[].quizEnd': datetime.now().strftime(date_format_str)}})
+                        db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$push': {'courses.$.courseQuizzes.$[].quizMarks': 0}})
+                        db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$set': {'courses.$.courseQuizzes.$[].quizEnd': datetime.now().strftime(date_format_str)}})
                     
-                updatedUser = db['test'].find_one({'_id': request.form.get('WaId')})
+                updatedUser = db['test'].find_one({'_id': request_data['from']})
                 completeMarks_ = updatedUser['courses'][index]['courseQuizzes'][quizNumber]['quizMarks']
                 secondsTaken = int((datetime.strptime((updatedUser['courses'][index]['courseQuizzes'][quizNumber]['quizEnd']), date_format_str) - datetime.strptime((updatedUser['courses'][index]['courseQuizzes'][quizNumber]['quizStart']), date_format_str)).total_seconds())
                 completeMarks = sum(completeMarks_) - (secondsTaken * 0.01)
-                db['test'].update_one({'_id': request.form.get('WaId'), 'courses.courseQuizzes.quizId':quizId}, {'$set': {'courses.$.courseQuizzes.$[].quizScore': completeMarks}})
+                db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$set': {'courses.$.courseQuizzes.$[].quizScore': completeMarks}})
                 
-                sendText(request.form.get('WaId'), user['langId'], "Your quiz is over! You have scored " + str(completeMarks) + '!')
-                db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'quizBusy': 'false'}})
+                sendText(request_data['from'], user['langId'], "Your quiz is over! You have scored " + str(completeMarks) + '!')
+                db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': 'false'}})
                 return ''
 
             if len(user['courses'][index]['courseQuizzes'][quizNumber]['quizMarks']) < quizChosen['quizCount']:
@@ -416,44 +416,44 @@ def workflow(user, request, response_df, langId):
                 quizOptions = [quizChosen[questionNumber]['A'], quizChosen[questionNumber]['B'], quizChosen[questionNumber]['C']]
                 
                 if questionNumber_ > 1:
-                    if request.form.get('Body') == quizChosen[str(questionNumber_ - 1)]['answer']:
-                        db['test'].update_one({'_id': request.form.get('WaId'), 'courses.courseQuizzes.quizId':quizId}, {'$push': {'courses.$.courseQuizzes.$[].quizMarks': markPerQuestion}})
+                    if request_data['message']['text']['body'] == quizChosen[str(questionNumber_ - 1)]['answer']:
+                        db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$push': {'courses.$.courseQuizzes.$[].quizMarks': markPerQuestion}})
                         print('COERCTE')
                 
                     else:
-                        db['test'].update_one({'_id': request.form.get('WaId'), 'courses.courseQuizzes.quizId':quizId}, {'$push': {'courses.$.courseQuizzes.$[].quizMarks': 0}})
+                        db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$push': {'courses.$.courseQuizzes.$[].quizMarks': 0}})
                         print('INCORCET')
                 
                 quizBusy = str(index) +'-'+str(quizNumber)+'-'+quizId+'-'+questionNumber
-                db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'quizBusy': quizBusy}})
+                db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': quizBusy}})
                 quizImageId = getQuizPicture(quizChosen[questionNumber]['image'])
-                sendQuizQuestion(request.form.get('WaId'), user['langId'], quizChosen[questionNumber]['question'], quizOptions, quizImageId)
+                sendQuizQuestion(request_data['from'], user['langId'], quizChosen[questionNumber]['question'], quizOptions, quizImageId)
                 return ''    
         
         quizId = user['quizBusy'].split("-")[2]
         quizChosen = db["questions"].find_one({ '_id': quizId})
         courseChosenName = quizChosen['courseId']
-        db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'quizBusy': 'false'}})
-        sendText(request.form.get('WaId'), user['langId'], "Invalid selection! The quiz has been terminated. Please try again!")
-        db['test'].update_one({'_id': request.form.get('WaId'), 'courses.courseId':courseChosenName}, {'$pop': {'courses.$.courseQuizzes': 1}})
+        db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': 'false'}})
+        sendText(request_data['from'], user['langId'], "Invalid selection! The quiz has been terminated. Please try again!")
+        db['test'].update_one({'_id': request_data['from'], 'courses.courseId':courseChosenName}, {'$pop': {'courses.$.courseQuizzes': 1}})
         
         return ''
         
     
     if response_df.query_result.intent.display_name == 'Progress':
-        sendTwoButton(request.form.get('WaId'), user['langId'], "Do you want to check progress for yourself?", ["myself", "someone"], ["Yes", "No"])
+        sendTwoButton(request_data['from'], user['langId'], "Do you want to check progress for yourself?", ["myself", "someone"], ["Yes", "No"])
         return ''
     
     if response_df.query_result.intent.display_name == 'Progress - no':
-        sendText(request.form.get('WaId'), user['langId'], "Please specify the mobile number of that person starting with '91'. For example, 919876543210.")
+        sendText(request_data['from'], user['langId'], "Please specify the mobile number of that person starting with '91'. For example, 919876543210.")
         return ''
     
     if response_df.query_result.intent.display_name == 'Progress - yes' or response_df.query_result.intent.display_name == 'Progress - no - number':
         specifiedUser = ''
-        if (request.form.get('Body')).startswith("91"):
-            foundUser = db['test'].find_one({'_id': request.form.get('Body')})
+        if (request_data['message']['text']['body']).startswith("91"):
+            foundUser = db['test'].find_one({'_id': request_data['message']['text']['body']})
             if foundUser is None:
-                sendText(request.form.get('WaId'), user['langId'], "Invalid number. Please check if the provided number was correct.")
+                sendText(request_data['from'], user['langId'], "Invalid number. Please check if the provided number was correct.")
             else:
                 specifiedUser = foundUser
         
@@ -474,11 +474,11 @@ def workflow(user, request, response_df, langId):
                         continue
         
         if len(userCourses) == 0:
-            sendText(request.form.get('WaId'), user['langId'], "No progress to show sadly!")
+            sendText(request_data['from'], user['langId'], "No progress to show sadly!")
             return ''
         
-        db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'resultBusy': { 'busy':'true', 'user': specifiedUser['_id']}}})
-        sendList(request.form.get('WaId'), user['langId'], "Please choose the course to check progress", "Course", userCourses, userCourses, None, False)
+        db['test'].update_one({'_id': request_data['from']}, { "$set": {'resultBusy': { 'busy':'true', 'user': specifiedUser['_id']}}})
+        sendList(request_data['from'], user['langId'], "Please choose the course to check progress", "Course", userCourses, userCourses, None, False)
         return ''
         
     if user['resultBusy']['busy'] == 'true':
@@ -489,9 +489,9 @@ def workflow(user, request, response_df, langId):
                 # coursesRank.append(str(i + 1))
                 userCourses.append((specifiedUser['courses'][i]['courseId']))
                 
-        if request.form.get('Body') in userCourses: 
-            db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'resultBusy': { 'busy':'false', 'user': ''}}})
-            studentProgress(request.form.get('WaId'), user['resultBusy']['user'], request.form.get('Body'))
+        if request_data['message']['text']['body'] in userCourses: 
+            db['test'].update_one({'_id': request_data['from']}, { "$set": {'resultBusy': { 'busy':'false', 'user': ''}}})
+            studentProgress(request_data['from'], user['resultBusy']['user'], request_data['message']['text']['body'])
             return ''
             
         else:
