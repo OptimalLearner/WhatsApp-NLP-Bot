@@ -1,19 +1,71 @@
-<p> Payment Container </p>
-<form action="/success" method="POST">
-<script
-    src="https://checkout.razorpay.com/v1/checkout.js"
-    data-key="{{razorpay_key}}"
-    data-amount="{{payment['amount']}}"
-    data-currency="{{payment['currency']}}"
-    data-order_id="{{payment['id']}}"
-    data-buttontext="Pay with Razorpay"
-    data-name="ViKiNgS"
-    data-description="Payment For Course: {{payment['notes']['course']}}"
-    data-image="https://example.com/your_logo.jpg"
-    data-prefill.name="{{payment['notes']['name']}}"
-    data-prefill.email="{{payment['notes']['email']}}"
-    data-prefill.contact="{{payment['notes']['contact']}}"
-    data-theme.color="#F37254"
-></script>
-<input type="hidden" custom="Hidden Element" name="hidden">
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+    <title> ViKiNgS | Confirm Course Details </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+    <div class="form_container">
+        <h2 class="brand"> ViKiNgS </h2>
+        <form class="razorpayForm" action="/success" method="POST">
+            <span> Confirm Payment Details </span> 
+            <br />
+            <table class="table3">
+                <tr>
+                    <th> Course Name </th>
+                    <th> Course Price </th>
+                </tr>
+                {% for i in range(courseLen) %}
+                <tr>
+                    <td style="text-align: left"> {{ course[i]["courseId"] }} </td>
+                    <td> ₹ {{ course[i]["courseFees"] }} </td>
+                </tr>
+                {%endfor%}
+                <tr style="height: 25px">
+                    <th> </th>
+                    <td>  </td>
+                </tr>
+                <tr>
+                    <th> Total Amount </th>
+                    <td> ₹ {{payment["notes"]["totalFees"]}} </td>
+                </tr>
+                <tr>
+                    <th> Discount Coupon </th>
+                    <td> {{payment["notes"]["offer"]}} </td>
+                </tr>   
+                <tr>
+                    <th> Discount Amount </th>
+                    <td> ₹ {{payment["notes"]["discountAmount"]}} </td>
+                </tr>   
+                <tr>
+                    <th> Total To Be Paid </th>
+                    <td> ₹ {{payment["notes"]["feesToBePaid"]}} </td>
+                </tr>            
+            </table>
+            <br />
+
+            <script
+                src="https://checkout.razorpay.com/v1/checkout.js"
+                data-key="{{razorpay_key}}"
+                data-amount="{{payment['amount']}}"
+                data-currency="{{payment['currency']}}"
+                data-order_id="{{payment['id']}}"
+                data-buttontext="Pay Fees"
+                data-name="ViKiNgS"
+                data-description="Payment For Course: {{payment['notes']['course']}}"
+                data-image="https://example.com/your_logo.jpg"
+                data-prefill.name="{{payment['notes']['name']}}"
+                data-prefill.email="{{payment['notes']['email']}}"
+                data-prefill.contact="{{payment['notes']['contact']}}"
+                data-theme.color="#25D366"
+            ></script>
+            <input type="hidden" custom="Hidden Element" name="hidden">
+            </form>
+    </div>
+</body>
+</html>

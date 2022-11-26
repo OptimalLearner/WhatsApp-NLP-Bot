@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> ViKiNgS | Payment Success </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+<body>
+    <div class="success_container">
+        <span class="material-symbols-outlined circle"> check_circle </span>
+        <br />
+        <span> Payment Successful </span>
+        <table class="table">
+            <tr>
+                <th> Email Id </th>
+                <td> {{email}} </td>
+            </tr>
+            <tr>
+                <th> Mobile Number </th>
+                <td> {{contact}} </td>
+            </tr>
+            <tr>
+                <th> Amount Paid </th>
+                <td> ₹ {{amount}} </td>
+            </tr>
+            <tr>
+                <th> Transaction Id </th>
+                <td> {{payment_id}} </td>
+            </tr>            
+        </table>
+        <table class="table1">
+            <tr>
+                <th> Email Id </th>
+            </tr>
+            <tr>
+                <td> {{email}} </td>
+            </tr>
+            <tr>
+                <th> Mobile Number </th>
+            </tr>
+            <tr>
+                <td> {{contact}} </td>
+            </tr>
+            <tr>
+                <th> Amount Paid </th>
+            </tr>
+            <tr>
+                <td> ₹ {{amount}} </td>
+            </tr>
+            <tr>
+                <th> Transaction Id </th>
+            </tr>
+            <tr>
+                <td> {{payment_id}} </td>
+            </tr>            
+        </table>
+        <button type="submit" class="download"> Download Receipt </button>
+    </div>
+</body>
+</html>

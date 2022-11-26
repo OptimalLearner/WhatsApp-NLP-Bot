@@ -1,18 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title> Payment Form </title>
+    <title> ViKiNgS | Course Registration </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
-    <form method="POST" action="/pay">
-        <h2> Please Enter The Details </h2>
-        <select name="course" id="course" required>
-            <option value="" disabled selected hidden> Select The Course You Want To Register For </option>
-            {%for i in range(len)%}
-                <option value="{{courses[i]}}">{{courses[i]}} </option>
-            {%endfor%}
-        </select>
-        <button type="submit" class="register continue">Continue For Payment</button>
-    </form>
+    <div class="form_container">
+        <h2 class="brand"> ViKiNgS </h2>
+        <form class="form" method="POST" action="/pay">
+            <span> Course Registration </span>
+            <div>
+                <label for="course_name"> COURSE SELECTED </label>
+                <input type="text" name="name" class="name" value="{{name}}" readonly />
+            </div>
+            <div>
+                <label for="course_name"> COURSE SELECTED </label>
+                <input type="text" name="mobile" class="mobile" value="+{{mobile[:2]}} {{mobile[2:]}}" readonly />
+            </div>
+            
+            <div>
+                <label for="course_name"> COURSE SELECTED </label>
+                <p class="course">
+                    {%for i in range(coursesLen)%}
+                    <span class="tag"> {{courses[i]["courseId"]}} </span>
+                    {%endfor%}
+                </p>
+            </div>
+            <div>
+                <label for="course_name"> COURSE SELECTED </label>
+                <select name="offers" class="offers" required>
+                    <option value="" disabled selected hidden> Select the discount coupons you want to apply </option>
+                    {%for i in range(offersLen)%}
+                        <option value="{{offers[i]}}">{{offers[i]}} </option>
+                    {%endfor%}
+                </select>
+            </div>
+            <button type="submit" class="register proceed">Proceed</button>
+        </form>
+    </div>
 </body>
 </html>
