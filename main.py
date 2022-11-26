@@ -26,7 +26,7 @@ from api.sendTemplate import sendTemplateForYoutube
 
 # Extra imports
 from pymongo import MongoClient
-import datetime
+from datetime import date
 import json
 import os
 import json
@@ -152,6 +152,10 @@ def reply():
     
     #_________________________________________
     if 'image' in request_data['message']:
+        
+        print(request.form)
+       
+        print(request.form)
        
         response = requests.get(request.form.get('MediaUrl0'))
         if response.status_code:
@@ -244,9 +248,8 @@ def reply():
             sendText(request_data['from'], user['langId'], response_df.query_result.fulfillment_text)
             return ''
 
-        elif user['email'] == '':
-            email_ = str(response_df.query_result.output_contexts[0].parameters.fields.get(
-                'email.original'))
+        elif user['email'] == '' :
+            email_ = str(response_df.query_result.output_contexts[0].parameters.fields.get('email.original'))
             email = email_.split("\"")[1]
             db['test'].update_many({'_id': request_data['from']}, {"$set": {'email': email.lower(), 'scheduleDone': "false"}})
             sendText(request_data['from'], user['langId'], response_df.query_result.fulfillment_text)
