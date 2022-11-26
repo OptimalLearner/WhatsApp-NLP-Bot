@@ -17,6 +17,8 @@ from main import app
 from utils.db import db
 from api.text import sendText
 
+print('inside payemnt *****************************************************')
+
 
 @app.route('/register-for-course/<WaId>')
 def form(WaId):
