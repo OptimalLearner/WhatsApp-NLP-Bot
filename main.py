@@ -183,13 +183,13 @@ def workflow(user, request, response_df, langId):
 
     if response_df.query_result.intent.display_name == 'New-Resource':
         
-        db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'resources': 'true'}})
+        db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'resource': 'true'}})
 
         userCourses =  []
         
         if len(user['courses']) == 0:
-            db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'resources': 'false'}})
-            sendText(request.form.get('WaId'), user['langId'], "You haven't enrolled in any courses for notes ! Please Enroll in the course to get resources !")
+            db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'resource': 'false'}})
+            sendText(request.form.get('WaId'), user['langId'], "You haven't enrolled in any courses for notes ! Please Enroll in the course to get resource !")
             return ''
         
         for i in range(0, len(user['courses'])):
@@ -199,39 +199,35 @@ def workflow(user, request, response_df, langId):
                 
         print(userCourses)
         if len(userCourses) == 0:
-            db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'resources': 'false'}})
-            sendText(request.form.get('WaId'), user['langId'], "You haven't enrolled in any courses for notes ! Please Enroll in the course to get resources !")
+            db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'resource': 'false'}})
+            sendText(request.form.get('WaId'), user['langId'], "You haven't enrolled in any courses for notes ! Please Enroll in the course to get resource !")
             return ''
         
-        sendList(request.form.get('WaId'), user['langId'], "Please choose the course for which you want resources", "Select Notes", userCourses, userCourses, None, False)
+        sendList(request.form.get('WaId'), user['langId'], "Please choose the course for which you want resource", "Select Courses", userCourses, userCourses, None, False)
         return ''
     if response_df.query_result.intent.display_name == 'New-Resource - course':
+        db['test'].update_one({'_id': request.form.get('WaId')}, { "$set": {'resource': request.form.get('Body')}})
         sendThreeButton(request.form.get('WaId'), user['langId'],"Please select below which resource you want for" + request.form.get('Body'),['books','notes','both'],['Books','Notes','Both'])
-        # sendText(request.form.get('WaId'), user['langId'], "Sending you " + request.form.get('Body') + " Resources...")
+        # sendText(request.form.get('WaId'), user['langId'], "Sending you " + request.form.get('Body') + " Resource...")
 
     if response_df.query_result.intent.display_name == 'New-Resource - course - books':
+        subject_name = db['test'].find_one({'_id': request.form.get('WaId')})['resource']
         
-        subject_name_ = str(response_df.query_result.output_contexts[0].parameters.fields.get(
-                'subject-name'))
-        subject_name = subject_name_.split("\"")[1]
-        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name + " Books... \n"  + user['courses'].find_one({'_id': subject_name})['courseBook'] )
+        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name  + " Books... \n"  + db['course'].find_one({'_id': subject_name})['courseBook'] )
+
 
     if response_df.query_result.intent.display_name == 'New-Resource - course - notes':
-        subject_name_ = str(response_df.query_result.output_contexts[0].parameters.fields.get(
-                'subject-name'))
-        subject_name = subject_name_.split("\"")[1]
-        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name + " Notes... \n"  + user['courses'].find_one({'_id': subject_name})['courseNotes'])
-    
+
+        subject_name = db['test'].find_one({'_id': request.form.get('WaId')})['resource']
+       
+        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name  + " Notes... \n"  + db['course'].find_one({'_id': subject_name})['courseNotes'] )
+
     if response_df.query_result.intent.display_name == 'New-Resource - course - both':
-        subject_name_ = str(response_df.query_result.output_contexts[0].parameters.fields.get(
-                'subject-name'))
-        subject_name = subject_name_.split("\"")[1]
-        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name + " Books... \n"  + user['courses'].find_one({'_id': subject_name})['courseBook'])
-        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name + " Notes... \n"  + user['courses'].find_one({'_id': subject_name})['courseNotes'])
 
+        subject_name = db['test'].find_one({'_id': request.form.get('WaId')})['resource']
 
-
-    
+        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name  + " Books... \n"  + db['course'].find_one({'_id': subject_name})['courseBook'] )
+        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name + " Notes... \n"  + db['course'].find_one({'_id': subject_name})['courseBook'] )
 
 
     if response_df.query_result.intent.display_name == 'Quiz':
