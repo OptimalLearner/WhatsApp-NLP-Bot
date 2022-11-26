@@ -109,6 +109,7 @@ def reply():
         print(mediaId)
         response_bytes = json.loads(getMedia(mediaId))
         bytes_data = response_bytes["bytes"]
+        bytes_data = str(bytes_data)
         print(bytes_data)
         b = base64.b64decode(bytes_data.encode())
         print(b)
