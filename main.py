@@ -26,8 +26,7 @@ from api.sendTemplate import sendTemplateForYoutube
 
 # Extra imports
 from pymongo import MongoClient
-from datetime import date
-import json
+from datetime import date, timedelta, datetime
 import os
 import json
 import random
@@ -41,8 +40,7 @@ import requests
 from dotenv import load_dotenv
 # import flask for setting up the web server
 from flask import Flask, Response, request,jsonify
-# Extra imports
-from pymongo import MongoClient
+
 
 
 load_dotenv()
