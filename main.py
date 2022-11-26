@@ -59,30 +59,6 @@ app = Flask(__name__)
 quiz_time = True
 
 
-resources = {
-    'books' : {
-        'math' : "https://drive.google.com/drive/folders/1T3WqOV2_XSZ_8GHyDpnGQgJklGS_rph1",
-        'science' : "https://drive.google.com/drive/folders/1UZXLGcpTeuMFwilBQ3A_gL8VyV5AT9sN",
-        'english' : "https://drive.google.com/drive/folders/1e8MfHRtU4_-kZ46MbGjjbfMfk_jJThL_",
-        'history' : "https://drive.google.com/drive/folders/1lzGR2e3FYN6NS7eZNhZ_u3jbM-jAoyEt",
-        'geography' : "https://drive.google.com/drive/folders/1lzGR2e3FYN6NS7eZNhZ_u3jbM-jAoyEt",
-        'python' : "https://drive.google.com/drive/folders/1XMq70rZBVpF3ePgb0OFQxuZMctzl4u_3",
-        'economics' : "https://drive.google.com/drive/folders/1XMq70rZBVpF3ePgb0OFQxuZMctzl4u_3",
-        'psychology' : "https://drive.google.com/drive/folders/1XMq70rZBVpF3ePgb0OFQxuZMctzl4u_3"
-    },
-    'notes' :{
-        'math' : "https://drive.google.com/drive/folders/1S-_nT7LbMVZ5yZpL1cpo11T5TdbQKO4R",
-        'science' : "https://drive.google.com/drive/folders/1XMq70rZBVpF3ePgb0OFQxuZMctzl4u_3",
-        'english' : "https://drive.google.com/drive/folders/1lzGR2e3FYN6NS7eZNhZ_u3jbM-jAoyEt",
-        'history' : "https://drive.google.com/drive/folders/1lzGR2e3FYN6NS7eZNhZ_u3jbM-jAoyEt",
-        'geography' : "https://drive.google.com/drive/folders/1lzGR2e3FYN6NS7eZNhZ_u3jbM-jAoyEt",
-        'python' : "https://drive.google.com/drive/folders/1XMq70rZBVpF3ePgb0OFQxuZMctzl4u_3",
-        'economics' : "https://drive.google.com/drive/folders/1XMq70rZBVpF3ePgb0OFQxuZMctzl4u_3",
-        'psychology' : "https://drive.google.com/drive/folders/1XMq70rZBVpF3ePgb0OFQxuZMctzl4u_3"
-    }
-}
-
-
 @app.route('/', methods=['POST'])
 def reply():
     
