@@ -253,7 +253,7 @@ def workflow(user, request, response_df, langId):
 
     if response_df.query_result.intent.display_name == 'New-Resource':
         
-        db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'true'}})
+        db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
 
         userCourses =  []
         
@@ -279,26 +279,26 @@ def workflow(user, request, response_df, langId):
         db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': request_data['message']['text']['body']}})
         sendThreeButton(request_data['from'], user['langId'],"Please select below which resource you want for" + request_data['message']['text']['body'],['books','notes','both'],['Books','Notes','Both'])
         # sendText(request_data['from'], user['langId'], "Sending you " + request_data['message']['text']['body'] + " Resource...")
-
+        db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
     if response_df.query_result.intent.display_name == 'New-Resource - course - books':
         subject_name = db['test'].find_one({'_id': request_data['from']})['resource']
         
         sendText(request_data['from'], user['langId'], "Sending you " + subject_name  + " Books... \n"  + db['course'].find_one({'_id': subject_name})['courseBook'] )
-
+        db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
 
     if response_df.query_result.intent.display_name == 'New-Resource - course - notes':
 
         subject_name = db['test'].find_one({'_id': request_data['from']})['resource']
        
         sendText(request_data['from'], user['langId'], "Sending you " + subject_name  + " Notes... \n"  + db['course'].find_one({'_id': subject_name})['courseNotes'] )
-
+        db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
     if response_df.query_result.intent.display_name == 'New-Resource - course - both':
 
         subject_name = db['test'].find_one({'_id': request_data['from']})['resource']
 
         sendText(request_data['from'], user['langId'], "Sending you " + subject_name  + " Books... \n"  + db['course'].find_one({'_id': subject_name})['courseBook'] )
         sendText(request_data['from'], user['langId'], "Sending you " + subject_name + " Notes... \n"  + db['course'].find_one({'_id': subject_name})['courseBook'] )
-
+        db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
 
     if response_df.query_result.intent.display_name == 'Quiz':
         
