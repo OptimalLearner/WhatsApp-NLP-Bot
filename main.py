@@ -14,6 +14,7 @@ from utils.schedule import getTimeSlot
 from utils.schedule import bookTimeSlot
 from utils.reschedule import rescheduleAppointment
 from utils.imgMedia import imgToText
+from utils.receipt import get_receipt
 
 from api.text import sendText
 from api.quizButtons import sendQuiz
@@ -23,6 +24,7 @@ from api.threeButton import sendThreeButton
 from api.list import sendList
 from api.uploadMedia import uploadMedia
 from api.sendTemplate import sendTemplateForYoutube
+from api.media import sendMedia
 
 # Extra imports
 from pymongo import MongoClient
@@ -498,6 +500,7 @@ def success():
         print(request.form)
 
         WaId = session["contact"]
+        amount = session["amount"]
 
         userInfo = db['test'].find_one({"_id": WaId})
         cartInfo = db['cart'].find_one({"_id": WaId})
@@ -536,7 +539,10 @@ def success():
 
         db["cart"].delete_one({'_id': WaId})
 
-        print('session offer', session['offer'])
+        get_receipt(courseDetails, session['amount'])
+        mediaId, mediaType = uploadMedia('receipt.pdf', 'static/paymentMedia/receipt.pdf', 'pdf')
+        print(mediaId, mediaType)
+        sendMedia(WaId, mediaId, mediaType)
 
         if session['offer'] != 'None':
             db['test'].update_one({'_id': WaId, 'offersAvailed.discountId': session['offer']}, {'$set': {'offersAvailed.$[offersAvailed].discountRedeemed': "true"}}, array_filters=[{"offersAvailed.discountId": {"$eq": session['offer']}}], upsert=True)
@@ -549,10 +555,13 @@ def success():
         wa_message += 'You can also check for progress of individual courses!\nText *Progress me* for example!'
         sendText(WaId,'en', wa_message)
 
-        # pop all sessions
+        # remove all sessions values
+        session.pop('contact', None)
+        session.pop('offer', None)
+        session.pop('amount', None)
 
-        return render_template('success.html', payment_id=request.form['razorpay_payment_id'], contact=session["contact"], email = userInfo["email"], amount=session["amount"])
+        return render_template('success.html', payment_id=request.form['razorpay_payment_id'], contact=WaId, email = userInfo["email"], amount=amount)
         
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
