@@ -107,7 +107,8 @@ def reply():
         WaId = request_data['from']
         mediaId = request_data['message']['image']['id']
         print(mediaId)
-        bytes_data = getMedia(mediaId)["bytes"]
+        response_bytes = getMedia(mediaId)
+        bytes_data = response_bytes["bytes"]
         print(bytes_data)
         b = base64.b64decode(bytes_data.encode())
         print(b)
