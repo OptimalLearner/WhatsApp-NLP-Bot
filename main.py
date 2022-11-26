@@ -79,7 +79,7 @@ def reply():
     # sendText(request_data.get('sourceAddress'), "en", "Nothing is up!")
 
     # if "order" in request_data["messageParameters"]:
-    #     WaId = request_data["sourceAddress"]
+    #     WaId = request_data['from']
     #     if len(request_data["product_items"]) < 1:
     #         print('No Course Selected')
     #         sendText(WaId,'en',"No Course Selected")
@@ -177,13 +177,14 @@ def reply():
         return ''
     # print(request)
     global quiz_time
+    # global message
     message_ = request_data['message']['text']['body']
     # print(request.form)
 
     langId = 'en'
-    # if langid.classify(message_) is None:
-    #     langId = 'en'
-    # langId = langid.classify(message_)[0]
+    if langid.classify(message_) is None:
+        langId = 'en'
+    langId = langid.classify(message_)[0]
     if langId != 'en':
         message = GoogleTranslator(
             source="auto", target="en").translate(message_)
@@ -194,7 +195,7 @@ def reply():
 
 #_____________Video Search wiith send Template ________________________________________________
 
-    ytResults = youtube(message)
+    ytResults = youtube(message_)
     for ytResult in ytResults:
         print(os.path.splitext(ytResult['thumbnail'])[0])
         print(os.path.splitext(ytResult['thumbnail'])[1])
