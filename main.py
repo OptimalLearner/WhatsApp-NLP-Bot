@@ -78,7 +78,7 @@ def reply():
 
     if request_data["message"]["type"] == "order":
         WaId = request_data["from"]
-        if len(request_data["product_items"]) < 1:
+        if len(request_data["message"]["order"]["product_items"]) < 1:
             print('No Course Selected')
             sendText(WaId,'en',"No Course Selected")
             pass
@@ -93,7 +93,7 @@ def reply():
                 pass
             else:
                 # Get Requested Courses from cart
-                requestedCourses = request_data["product_items"]
+                requestedCourses = request_data["message"]["order"]["product_items"]
                 alreadyRegisteredCourses = [x["courseId"] for x in userInfo["courses"]]
                 print("already registered", alreadyRegisteredCourses)
                 alreadyRegisteredFlag = 0
