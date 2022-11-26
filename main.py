@@ -238,20 +238,20 @@ def workflow(user, request, response_df, langId):
         subject_name_ = str(response_df.query_result.output_contexts[0].parameters.fields.get(
                 'subject-name'))
         subject_name = subject_name_.split("\"")[1]
-        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name + " Books... \n"  + resources['books'][subject_name])
+        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name + " Books... \n"  + user['courses'].find_one({'_id': subject_name})['courseBook'] )
 
     if response_df.query_result.intent.display_name == 'New-Resource - course - notes':
         subject_name_ = str(response_df.query_result.output_contexts[0].parameters.fields.get(
                 'subject-name'))
         subject_name = subject_name_.split("\"")[1]
-        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name + " Notes... \n"  + resources['notes'][subject_name])
+        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name + " Notes... \n"  + user['courses'].find_one({'_id': subject_name})['courseNotes'])
     
     if response_df.query_result.intent.display_name == 'New-Resource - course - both':
         subject_name_ = str(response_df.query_result.output_contexts[0].parameters.fields.get(
                 'subject-name'))
         subject_name = subject_name_.split("\"")[1]
-        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name + " Books... \n"  + resources['books'][subject_name])
-        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name + " Notes... \n"  + resources['notes'][subject_name])
+        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name + " Books... \n"  + user['courses'].find_one({'_id': subject_name})['courseBook'])
+        sendText(request.form.get('WaId'), user['langId'], "Sending you " + subject_name + " Notes... \n"  + user['courses'].find_one({'_id': subject_name})['courseNotes'])
 
 
 
