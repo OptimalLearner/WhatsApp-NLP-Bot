@@ -41,9 +41,11 @@ pyimgur
 gunicorn
 SpeechRecognition
 pydub
-easyocr
-opencv-python
+easyocr==1.6.2
+opencv-contrib-python==4.6.0.66
+opencv-python==4.5.5.64
+opencv-python-headless==4.5.4.60
 deep_translator
-langid
+langid==1.1.6
 razorpay
 fpdf
