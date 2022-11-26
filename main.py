@@ -107,7 +107,9 @@ def reply():
         WaId = request_data['from']
         mediaId = request_data['message']['image']['id']
         print(mediaId)
-        response_bytes = json.loads(getMedia(mediaId))
+        # response_bytes = json.loads(getMedia(mediaId))
+        response_bytes = json.dumps(json.loads(getMedia(mediaId)))
+        print(json.dumps(json.loads(getMedia(mediaId))))
         bytes_data = response_bytes["bytes"]
         bytes_data = str(bytes_data)
         print(bytes_data)
