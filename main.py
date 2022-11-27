@@ -129,9 +129,9 @@ def reply():
         b = base64.b64decode(bytes_data.encode())
         print(b)
         img = Image.open(io.BytesIO(b))
-        
-        img.save('Working.' + str(response_bytes["contentType"]["subtype"]))
-        textFromImage = imgToText('Working.' + str(response_bytes["contentType"]["subtype"]))
+        img_name = 'Working.' + str(response_bytes["contentType"]["subtype"])
+        img.save('static/messageMedia/' + img_name)
+        textFromImage = imgToText('static/messageMedia/' + img_name)
         print(textFromImage)
         print(google_search(textFromImage))
         sendText(request_data['from'],'en',"This is what we have found ....")
