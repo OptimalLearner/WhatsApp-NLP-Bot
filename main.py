@@ -95,21 +95,21 @@ def reply():
 
 
     # global request_data
-    request_data = json.loads(request.data)
+    # request_data = json.loads(request.data)
     # if request_data.get('sourceCountry') is not None:
     #     return ''
       #___Testing____
-    # request_data = {
-    #     'from': request.form.get('WaId'),
-    #     'sessionId': '7575757575757',
-    #     'message': {
-    #         'image': {
-    #             'id': "2830078183790951"
-    #         },
-    #         'mime_type' :"image/jpg"
-    #     }
+    request_data = {
+        'from': request.form.get('WaId'),
+        'sessionId': '7575757575757',
+        'message': {
+            'image': {
+                'id': "2830078183790951"
+            },
+            'mime_type' :"image/jpg"
+        }
         
-    # }
+    }
     # ___
     
     # print(request_data)
