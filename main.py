@@ -94,50 +94,51 @@ def reply():
     #____________________NEW REQUEST CHANGES         ______
 
 
-    global request_data
+    # global request_data
     request_data = json.loads(request.data)
     # if request_data.get('sourceCountry') is not None:
     #     return ''
+      #___Testing____
+    # request_data = {
+    #     'from': request.form.get('WaId'),
+    #     'sessionId': '7575757575757',
+    #     'message': {
+    #         'image': {
+    #             'id': "2830078183790951"
+    #         },
+    #         'mime_type' :"image/jpg"
+    #     }
+        
+    # }
+    # ___
     
-    print(request_data)
-    if "businessId" not in request_data:
-        return ''
+    # print(request_data)
+    # if "businessId" not in request_data:
+    #     return ''
     
     if 'image' in request_data['message']:
         WaId = request_data['from']
         mediaId = request_data['message']['image']['id']
         print(mediaId)
-        # response_bytes = json.loads(getMedia(mediaId))
-        response_bytes = json.dumps(json.loads(getMedia(mediaId)))
-        print(json.dumps(json.loads(getMedia(mediaId))))
+        response_bytes = (getMedia(mediaId)).json()
         bytes_data = response_bytes["bytes"]
         bytes_data = str(bytes_data)
         print(bytes_data)
         b = base64.b64decode(bytes_data.encode())
         print(b)
         img = Image.open(io.BytesIO(b))
-        img_type = request_data['message']['image']['mime-type']
-        print(img_type)
-        img_type = img_type[img_type.index("/") + len("/"):]
-        img.save('Working.' + img_type)
-        textFromImage = imgToText('Working.' + img_type)
+        
+        img.save('Working.' + str(response_bytes["contentType"]["subtype"]))
+        textFromImage = imgToText('Working.' + str(response_bytes["contentType"]["subtype"]))
         print(textFromImage)
         print(google_search(textFromImage))
         sendText(request_data['from'],'en',"This is what we have found ....")
         sendText(request_data['from'],'en',google_search(textFromImage))
-        #     fp.write(response.content)
-        #     fp.close()
 
-        # response = requests.get(request.form.get('MediaUrl0'))
-        # if response.status_code:
-        #     fp = open('client_Image.jpg', 'wb')
-        #     fp.write(response.content)
-        #     fp.close()
-        textFromImage = imgToText('Working.' + img_type)
         langId = 'en'
-        # if langid.classify(textFromImage) is None:
-        #     langId = 'en'
-        # langId = langid.classify(textFromImage)[0]
+        if langid.classify(textFromImage) is None:
+            langId = 'en'
+        langId = langid.classify(textFromImage)[0]
         
         print(textFromImage)
         print(google_search(textFromImage))
