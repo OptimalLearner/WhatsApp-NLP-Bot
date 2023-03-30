@@ -11,6 +11,10 @@ def chabo_search(query_text):
     print(query_text)
 
     Chabo_API_Key =  os.environ['Chabo_API_KEY']
+    
+    if Chabo_API_Key == '':
+        return "Chabo not available!"
+    
     faultyText = "No results found! Please check your input once again!"
     print('>>>> Query text', query_text)
     if query_text == '':
