@@ -816,6 +816,12 @@ def workflow(user, request_data, response_df, langId, message):
     if user['UNIT-TESTING'] == 'blue':
         return ''
         
+    if "chabo" in message.lower(): 
+        print(message)
+        query = re.sub("[^\S\n\t]*chabo[o]*[.,!?]*[^\S\n\t]*", "", message.lower())
+        result_search = chabo_search(query)
+        print(result_search)
+        sendText(request_data['from'], langId, result_search, request_data['sessionId'])
     
     if response_df.query_result.intent.display_name == 'Videos':
 
@@ -832,13 +838,6 @@ def workflow(user, request_data, response_df, langId, message):
             url_link = str(ytResult['url'])
             sendTemplateForYoutube(request_data['from'],mediaId,url_link)
         return ''
-    
-    if "chabo" in message.lower(): 
-        print(message)
-        query = re.sub("[^\S\n\t]*chabo[o]*[.,!?]*[^\S\n\t]*", "", message.lower())
-        result_search = chabo_search(query)
-        print(result_search)
-        sendText(request_data['from'], langId, result_search, request_data['sessionId'])
         
     if response_df.query_result.intent.display_name == 'WebSearch': 
         result_search = google_search(response_df.query_result.query_text)
