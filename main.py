@@ -446,6 +446,13 @@ def workflow(user, request_data, response_df, langId, message):
     if "chabo" in message.lower(): 
         print(message)
         query = re.sub("[^\S\n\t]*chabo[o]*[.,!?]*[^\S\n\t]*", "", message.lower())
+        chabo_think = [
+            'Chabo here!👾 Awesome question! Give me a minute!',
+            'Chabo needs some time to process such a great thought! 🤖',
+            'Let Chabo think about it! 👾',
+            "It's Chabo! Sending what I found in a minute! 🤖"
+        ]
+        sendText(request_data['from'], langId, chabo_think[random.randint(0, 3)], request_data['sessionId'])
         result_search = chabo_search(query)
         print(result_search)
         sendText(request_data['from'], langId, result_search, request_data['sessionId'])
