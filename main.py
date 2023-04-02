@@ -314,10 +314,10 @@ def reply():
 
     if user == None and response_df.query_result.intent.display_name != 'Register' and response_df.query_result.intent.display_name != 'Organisation':
         
-        welcome_text = ["Welcome to our world of education! 🎓 Register yourself now!",
-                        "It's a better place if you register today! 😁",
-                        "Trust me! Registering with us will brighten your future 🌠",
-                        "Register now for an ocean of knowledge and skills! 🌊"]
+        welcome_text = ["Hey I am Chabo! Welcome to our world of education! 🎓 Register yourself now!",
+                        "Hey I am Chabo! It's a better place if you register today! 😁",
+                        "Hey I am Chabo! Trust me! Registering with us will brighten your future 🌠",
+                        "Hey I am Chabo! Register now for an ocean of knowledge and skills! 🌊"]
         print(message)
         
 
