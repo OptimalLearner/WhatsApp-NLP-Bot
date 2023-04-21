@@ -527,112 +527,6 @@ def workflow(user, request_data, response_df, langId, message):
         rescheduleAppointment(intentNeeded, request_data['from'], user['langId'], wantedTime, request_data['sessionId'])
         return ''
     
-    if response_df.query_result.intent.display_name == 'New-Resource':
-        
-        db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'true'}})
-
-        userCourses =  []
-        resourceUserCourses = []
-        
-        if len(user['courses']) == 0:
-            db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
-            sendText(request_data['from'], user['langId'], "You haven't enrolled in any courses for notes!😕 Please enrol in the course to get resources!", request_data['sessionId'])
-            sendCatalog(request_data['from'],user['langId'],request_data['sessionId'])
-            
-            return ''
-        
-        for i in range(0, len(user['courses'])):
-            if user['courses'][i]['coursePayment'] is True and user['courses'][i]['courseEndDate'] > str(date.today()):
-                resourceUserCourses.append(user['courses'][i]['courseId']+'-resbnb')
-                userCourses.append(user['courses'][i]['courseId'])
-                
-        print(userCourses)
-        if len(userCourses) == 0:
-            db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
-            sendText(request_data['from'], user['langId'], "You haven't enrolled in any courses for notes!😕 Please enrol in the course to get resources!", request_data['sessionId'])
-            sendCatalog(request_data['from'],user['langId'],request_data['sessionId'])
-            return ''
-        
-        sendList(request_data['from'], user['langId'], "Please choose the course for which you want resource", "Select Courses", resourceUserCourses, userCourses, None, False, request_data['sessionId'])
-        return ''
-    
-    if response_df.query_result.intent.display_name == 'New-Resource - course' or '-resbnb' in message:
-        userCourses =  []
-        resourceUserCourses = []
-        for i in range(0, len(user['courses'])):
-            if user['courses'][i]['coursePayment'] is True and user['courses'][i]['courseEndDate'] > str(date.today()):
-                resourceUserCourses.append(user['courses'][i]['courseId']+'-resbnb')
-                userCourses.append(user['courses'][i]['courseId'])
-        if message in userCourses or message in resourceUserCourses:
-            subjectName_ = message.split("-")[0]
-            db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': subjectName_}})
-            sendThreeButton(request_data['from'], user['langId'],"Please select below which resource you want for " + subjectName_,['gveres-books','gveres-notes','gveres-both'],['Books','Notes','Both'], request_data['sessionId'])
-            return ''
-        
-        else:
-            sendText(request_data['from'], user['langId'], "Invalid selection! The quiz has been terminated. Please try again!", request_data['sessionId'])
-            db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
-            return ''
-
-    if response_df.query_result.intent.display_name == 'New-Resource - course - books' or message == 'gveres-books':
-        subject_name = db['test'].find_one({'_id': request_data['from']})['resource']
-        
-        sendText(request_data['from'], user['langId'], "Sending you books for " + subject_name + " 📚\n"  + db['course'].find_one({'_id': subject_name})['courseBook'], request_data['sessionId'])
-        db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
-        return ''
-
-
-    if response_df.query_result.intent.display_name == 'New-Resource - course - notes' or message == 'gveres-notes':
-
-        subject_name = db['test'].find_one({'_id': request_data['from']})['resource']
-
-        sendText(request_data['from'], user['langId'], "Sending you notes for " + subject_name  + " 📑\n"  + db['course'].find_one({'_id': subject_name})['courseNotes'], request_data['sessionId'])
-        db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
-        return ''
-
-    if response_df.query_result.intent.display_name == 'New-Resource - course - both' or message == 'gveres-both':
-
-        subject_name = db['test'].find_one({'_id': request_data['from']})['resource']
-
-        sendText(request_data['from'], user['langId'], "Sending you books for " + subject_name + " 📚\n"  + db['course'].find_one({'_id': subject_name})['courseBook'], request_data['sessionId'])
-        sendText(request_data['from'], user['langId'], "Sending you notes for " + subject_name  + " 📑\n"  + db['course'].find_one({'_id': subject_name})['courseNotes'], request_data['sessionId'])
-        db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
-        return ''
-
-
-    
-    if response_df.query_result.intent.display_name == 'Quiz':
-        
-        db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': 'true'}})
-        
-        userCourses =  []
-        
-        if len(user['courses']) == 0:
-            db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': 'false'}})
-            sendText(request_data['from'], user['langId'], "You haven't enrolled in any courses that contain quizzes. Why not explore more quizzes right now! 🥳", request_data['sessionId'])
-            sendCatalog(request_data['from'],user['langId'],request_data['sessionId'])
-            return ''
-        
-        for i in range(0, len(user['courses'])):
-            if user['courses'][i]['coursePayment'] is True and user['courses'][i]['courseEndDate'] > str(date.today()) and user['courses'][i]['courseType'] == 'static':
-                courseListItem = db['course'].find_one({'_id': user['courses'][i]['courseId']})
-                print(len(courseListItem['courseQuizzes']))
-                print(len(user['courses'][i]['courseQuizzes']))
-                print(user['courses'][i]['courseId'])
-                if len(courseListItem['courseQuizzes']) > len(user['courses'][i]['courseQuizzes']):
-                    # coursesRank.append(str(i + 1))
-                    userCourses.append((user['courses'][i]['courseId']))
-                
-        print(userCourses)
-        if len(userCourses) == 0:
-            db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': 'false'}})
-            sendText(request_data['from'], user['langId'], "You haven't enrolled in any courses that contain quizzes for now. Why not explore more quizzes right now! 🥳", request_data['sessionId'])
-            sendCatalog(request_data['from'],user['langId'],request_data['sessionId'])
-            return ''
-        
-        sendList(request_data['from'], user['langId'], "Please choose the course for which you want to test yourself", "Choose Quiz", userCourses, userCourses, None, False, request_data['sessionId'])
-        return ''
-    
     if user['quizBusy'] != 'false':
         date_format_str = '%d/%m/%Y %H:%M:%S'
         userCourses = []
@@ -761,7 +655,244 @@ def workflow(user, request_data, response_df, langId, message):
         db['test'].update_one({'_id': request_data['from'], 'courses.courseId':courseChosenName}, {'$pop': {'courses.$.courseQuizzes': 1}})
         
         return ''
+    
+    
+    
+    if response_df.query_result.intent.display_name == 'New-Resource':
         
+        db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'true'}})
+
+        userCourses =  []
+        resourceUserCourses = []
+        
+        if len(user['courses']) == 0:
+            db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
+            sendText(request_data['from'], user['langId'], "You haven't enrolled in any courses for notes!😕 Please enrol in the course to get resources!", request_data['sessionId'])
+            sendCatalog(request_data['from'],user['langId'],request_data['sessionId'])
+            
+            return ''
+        
+        for i in range(0, len(user['courses'])):
+            if user['courses'][i]['coursePayment'] is True and user['courses'][i]['courseEndDate'] > str(date.today()):
+                resourceUserCourses.append(user['courses'][i]['courseId']+'-resbnb')
+                userCourses.append(user['courses'][i]['courseId'])
+                
+        print(userCourses)
+        if len(userCourses) == 0:
+            db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
+            sendText(request_data['from'], user['langId'], "You haven't enrolled in any courses for notes!😕 Please enrol in the course to get resources!", request_data['sessionId'])
+            sendCatalog(request_data['from'],user['langId'],request_data['sessionId'])
+            return ''
+        
+        sendList(request_data['from'], user['langId'], "Please choose the course for which you want resource", "Select Courses", resourceUserCourses, userCourses, None, False, request_data['sessionId'])
+        return ''
+    
+    if response_df.query_result.intent.display_name == 'New-Resource - course' or '-resbnb' in message:
+        userCourses =  []
+        resourceUserCourses = []
+        for i in range(0, len(user['courses'])):
+            if user['courses'][i]['coursePayment'] is True and user['courses'][i]['courseEndDate'] > str(date.today()):
+                resourceUserCourses.append(user['courses'][i]['courseId']+'-resbnb')
+                userCourses.append(user['courses'][i]['courseId'])
+        if message in userCourses or message in resourceUserCourses:
+            subjectName_ = message.split("-")[0]
+            db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': subjectName_}})
+            sendThreeButton(request_data['from'], user['langId'],"Please select below which resource you want for " + subjectName_,['gveres-books','gveres-notes','gveres-both'],['Books','Notes','Both'], request_data['sessionId'])
+            return ''
+        
+        else:
+            sendText(request_data['from'], user['langId'], "Invalid selection! The quiz has been terminated. Please try again!", request_data['sessionId'])
+            db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
+            return ''
+
+    if response_df.query_result.intent.display_name == 'New-Resource - course - books' or message == 'gveres-books':
+        subject_name = db['test'].find_one({'_id': request_data['from']})['resource']
+        
+        sendText(request_data['from'], user['langId'], "Sending you books for " + subject_name + " 📚\n"  + db['course'].find_one({'_id': subject_name})['courseBook'], request_data['sessionId'])
+        db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
+        return ''
+
+
+    if response_df.query_result.intent.display_name == 'New-Resource - course - notes' or message == 'gveres-notes':
+
+        subject_name = db['test'].find_one({'_id': request_data['from']})['resource']
+
+        sendText(request_data['from'], user['langId'], "Sending you notes for " + subject_name  + " 📑\n"  + db['course'].find_one({'_id': subject_name})['courseNotes'], request_data['sessionId'])
+        db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
+        return ''
+
+    if response_df.query_result.intent.display_name == 'New-Resource - course - both' or message == 'gveres-both':
+
+        subject_name = db['test'].find_one({'_id': request_data['from']})['resource']
+
+        sendText(request_data['from'], user['langId'], "Sending you books for " + subject_name + " 📚\n"  + db['course'].find_one({'_id': subject_name})['courseBook'], request_data['sessionId'])
+        sendText(request_data['from'], user['langId'], "Sending you notes for " + subject_name  + " 📑\n"  + db['course'].find_one({'_id': subject_name})['courseNotes'], request_data['sessionId'])
+        db['test'].update_one({'_id': request_data['from']}, { "$set": {'resource': 'false'}})
+        return ''
+
+
+    
+    if response_df.query_result.intent.display_name == 'Quiz':
+        
+        db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': 'true'}})
+        
+        userCourses =  []
+        
+        if len(user['courses']) == 0:
+            db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': 'false'}})
+            sendText(request_data['from'], user['langId'], "You haven't enrolled in any courses that contain quizzes. Why not explore more quizzes right now! 🥳", request_data['sessionId'])
+            sendCatalog(request_data['from'],user['langId'],request_data['sessionId'])
+            return ''
+        
+        for i in range(0, len(user['courses'])):
+            if user['courses'][i]['coursePayment'] is True and user['courses'][i]['courseEndDate'] > str(date.today()) and user['courses'][i]['courseType'] == 'static':
+                courseListItem = db['course'].find_one({'_id': user['courses'][i]['courseId']})
+                print(len(courseListItem['courseQuizzes']))
+                print(len(user['courses'][i]['courseQuizzes']))
+                print(user['courses'][i]['courseId'])
+                if len(courseListItem['courseQuizzes']) > len(user['courses'][i]['courseQuizzes']):
+                    # coursesRank.append(str(i + 1))
+                    userCourses.append((user['courses'][i]['courseId']))
+                
+        print(userCourses)
+        if len(userCourses) == 0:
+            db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': 'false'}})
+            sendText(request_data['from'], user['langId'], "You haven't enrolled in any courses that contain quizzes for now. Why not explore more quizzes right now! 🥳", request_data['sessionId'])
+            sendCatalog(request_data['from'],user['langId'],request_data['sessionId'])
+            return ''
+        
+        sendList(request_data['from'], user['langId'], "Please choose the course for which you want to test yourself", "Choose Quiz", userCourses, userCourses, None, False, request_data['sessionId'])
+        return ''
+    
+    # if user['quizBusy'] != 'false':
+    #     date_format_str = '%d/%m/%Y %H:%M:%S'
+    #     userCourses = []
+    #     for i in range(0, len(user['courses'])):
+    #         if user['courses'][i]['coursePayment'] is True and user['courses'][i]['courseEndDate'] > str(date.today()) and user['courses'][i]['courseType'] == 'static':
+    #             courseListItem = db['course'].find_one({'_id': user['courses'][i]['courseId']})
+    #             if len(courseListItem['courseQuizzes']) > len(user['courses'][i]['courseQuizzes']):
+                    
+    #                 userCourses.append((user['courses'][i]['courseId']))
+                
+    #     if user['quizBusy'] == 'true':
+            
+    #         if message in userCourses: 
+            
+    #             courseChosen = db["course"].find_one({ '_id': message })
+    #             courseChosenName = courseChosen['_id']
+
+    #             index  = -1
+    #             for i in range(0, len(user['courses'])):
+    #                 if user['courses'][i]['courseId'] == courseChosen['_id'] and len(courseChosen['courseQuizzes']) >= len(user['courses'][i]['courseQuizzes']):
+    #                     index = i
+    #                     quizNumber = len(user['courses'][index]['courseQuizzes'])
+
+    #             quizId = courseChosen['courseQuizzes'][quizNumber]
+
+    #             quizChosen = db["questions"].find_one({ '_id': quizId})
+
+    #             if quizNumber == len(user['courses'][index]['courseQuizzes']):
+    #                 db['test'].update_one({'_id': request_data['from'], 'courses.courseId':courseChosenName}, {'$push': {'courses.$.courseQuizzes': {
+    #                     'quizId': quizId,
+    #                     'quizStart': datetime.now().strftime(date_format_str),
+    #                     'quizMarks':[],
+    #                     'quizScore': 0
+    #                 }}})
+
+    #             quizOptions = []
+    #             updatedUser = db['test'].find_one({'_id': request_data['from']})
+    #             questionNumber_ = len(updatedUser['courses'][index]['courseQuizzes'][quizNumber]['quizMarks']) + 1
+    #             questionNumber = str(len(updatedUser['courses'][index]['courseQuizzes'][quizNumber]['quizMarks']) + 1)
+    #             quizOptions = [quizChosen[questionNumber]['A'], quizChosen[questionNumber]['B'], quizChosen[questionNumber]['C']]
+
+    #             quizBusy = str(index) +'-'+str(quizNumber)+'-'+quizId+'-'+questionNumber
+    #             db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': quizBusy}})
+    #             quizImageId = getQuizPicture(quizChosen[questionNumber]['image'])
+
+    #             sendQuizQuestion(request_data['from'], user['langId'], quizChosen[questionNumber]['question'], quizOptions, quizImageId)
+
+    #             return ''
+            
+    #         else:
+    #             db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': 'false'}})
+    #             sendText(request_data['from'], user['langId'], "Invalid selection of course! The quiz has terminated. Please try again!", request_data['sessionId'])
+    #             return ''
+
+    #     if message in ['A', 'B', 'C']:
+            
+    #         index = int(user['quizBusy'].split("-")[0])
+    #         quizNumber = int(user['quizBusy'].split("-")[1])
+    #         quizId = user['quizBusy'].split("-")[2]
+    #         questionNumber = user['quizBusy'].split("-")[3]
+    #         quizChosen = db["questions"].find_one({ '_id': quizId})
+    #         markPerQuestion = int(quizChosen['quizMarks'] / quizChosen['quizCount'])
+    #         if int(questionNumber) >= quizChosen['quizCount']:
+    #             if len(user['courses'][index]['courseQuizzes'][quizNumber]['quizMarks']) + 1 ==  (quizChosen['quizCount']) and int(questionNumber) == quizChosen['quizCount']:
+    #                 if message == quizChosen[questionNumber]['answer']:
+    #                     db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$push': {'courses.$[courses].courseQuizzes.$[courseQuizzes].quizMarks': markPerQuestion}}, array_filters=[{"courses.courseId": {"$eq": quizChosen['courseId']}},{"courseQuizzes.quizId": {"$eq": quizId}}], upsert=True)
+    #                     db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$set': {'courses.$[courses].courseQuizzes.$[courseQuizzes].quizEnd': datetime.now().strftime(date_format_str)}}, array_filters=[{"courses.courseId": {"$eq": quizChosen['courseId']}},{"courseQuizzes.quizId": {"$eq": quizId}}], upsert=True)
+    #                     # db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$push': {'courses.$.courseQuizzes.$[].quizMarks': markPerQuestion}})
+    #                     # db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$set': {'courses.$.courseQuizzes.$[].quizEnd': datetime.now().strftime(date_format_str)}})
+
+    #                 else:
+    #                     db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$push': {'courses.$[courses].courseQuizzes.$[courseQuizzes].quizMarks': 0}}, array_filters=[{"courses.courseId": {"$eq": quizChosen['courseId']}},{"courseQuizzes.quizId": {"$eq": quizId}}], upsert=True)
+    #                     db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$set': {'courses.$[courses].courseQuizzes.$[courseQuizzes].quizEnd': datetime.now().strftime(date_format_str)}}, array_filters=[{"courses.courseId": {"$eq": quizChosen['courseId']}},{"courseQuizzes.quizId": {"$eq": quizId}}], upsert=True)
+    #                     # db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$push': {'courses.$.courseQuizzes.$[].quizMarks': 0}})
+    #                     # db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$set': {'courses.$.courseQuizzes.$[].quizEnd': datetime.now().strftime(date_format_str)}})
+                    
+    #             updatedUser = db['test'].find_one({'_id': request_data['from']})
+    #             completeMarks_ = updatedUser['courses'][index]['courseQuizzes'][quizNumber]['quizMarks']
+    #             secondsTaken = int((datetime.strptime((updatedUser['courses'][index]['courseQuizzes'][quizNumber]['quizEnd']), date_format_str) - datetime.strptime((updatedUser['courses'][index]['courseQuizzes'][quizNumber]['quizStart']), date_format_str)).total_seconds())
+    #             completeMarks = sum(completeMarks_) - (secondsTaken * 0.01)
+
+    #             db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$set': {'courses.$[courses].courseQuizzes.$[courseQuizzes].quizScore': completeMarks}}, array_filters=[{"courses.courseId": {"$eq": quizChosen['courseId']}},{"courseQuizzes.quizId": {"$eq": quizId}}], upsert=True)
+                
+    #             sendText(request_data['from'], user['langId'], "Your quiz is over! You have scored " + str(completeMarks) + '! 🥁', request_data['sessionId'])
+    #             if completeMarks >= (quizChosen['quizMarks'] * 0.8):
+    #                 discountBagged = db["discounts"].find_one({ '_id': quizId})
+    #                 discountPercentage = (1.0 - discountBagged['discountOffered']) * 100
+    #                 db['test'].update_one({'_id': request_data['from'] }, {'$push': {'offersAvailed': {
+    #                     'discountId': quizId,
+    #                     'discountRedeemed': False
+    #                 }}})
+    #                 sendText(request_data['from'], user['langId'], "Congratulations!🎉 You have bagged a discount coupon! 🎁  Use code *" + str(quizId) + "* next time to avail a discount of " + str(int(discountPercentage))+ "% on your next payment!", request_data['sessionId'])
+                    
+    #             db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': 'false'}})
+    #             return ''
+
+    #         if len(user['courses'][index]['courseQuizzes'][quizNumber]['quizMarks']) < quizChosen['quizCount']:
+    #             quizOptions = []
+    #             questionNumber_ = int(questionNumber) + 1
+    #             questionNumber = str(questionNumber_)
+    #             # questionNumber = str(len(user['courses'][index]['courseQuizzes'][quizNumber]['quizMarks']) + 1)
+    #             quizOptions = [quizChosen[questionNumber]['A'], quizChosen[questionNumber]['B'], quizChosen[questionNumber]['C']]
+                
+    #             if questionNumber_ > 1:
+    #                 if message == quizChosen[str(questionNumber_ - 1)]['answer']:
+    #                     db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$push': {'courses.$[courses].courseQuizzes.$[courseQuizzes].quizMarks': markPerQuestion}}, array_filters=[{"courses.courseId": {"$eq": quizChosen['courseId']}},{"courseQuizzes.quizId": {"$eq": quizId}}], upsert=True)
+    #                     # db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$push': {'courses.$.courseQuizzes.$[].quizMarks': markPerQuestion}})
+    #                     print('COERCTE')
+                
+    #                 else:
+    #                     db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$push': {'courses.$[courses].courseQuizzes.$[courseQuizzes].quizMarks': 0}}, array_filters=[{"courses.courseId": {"$eq": quizChosen['courseId']}},{"courseQuizzes.quizId": {"$eq": quizId}}], upsert=True)
+    #                     # db['test'].update_one({'_id': request_data['from'], 'courses.courseQuizzes.quizId':quizId}, {'$push': {'courses.$.courseQuizzes.$[].quizMarks': 0}})
+    #                     print('INCORCET')
+                
+    #             quizBusy = str(index) +'-'+str(quizNumber)+'-'+quizId+'-'+questionNumber
+    #             db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': quizBusy}})
+    #             quizImageId = getQuizPicture(quizChosen[questionNumber]['image'])
+    #             sendQuizQuestion(request_data['from'], user['langId'], quizChosen[questionNumber]['question'], quizOptions, quizImageId)
+    #             return ''    
+        
+    #     quizId = user['quizBusy'].split("-")[2]
+    #     quizChosen = db["questions"].find_one({ '_id': quizId})
+    #     courseChosenName = quizChosen['courseId']
+    #     db['test'].update_one({'_id': request_data['from']}, { "$set": {'quizBusy': 'false'}})
+    #     sendText(request_data['from'], user['langId'], "Invalid selection! The quiz has been terminated. Please try again!", request_data['sessionId'])
+    #     db['test'].update_one({'_id': request_data['from'], 'courses.courseId':courseChosenName}, {'$pop': {'courses.$.courseQuizzes': 1}})
+        
+    #     return ''
+    
     
     if response_df.query_result.intent.display_name == 'Progress':
         sendTwoButton(request_data['from'], user['langId'], "Do you want to check progress for yourself? 📈", ["Yes-prg", "No-prg"], ["Yes", "No"], request_data['sessionId'])
