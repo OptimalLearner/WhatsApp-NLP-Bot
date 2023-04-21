@@ -6,7 +6,7 @@ from deep_translator import GoogleTranslator
 url = "https://iqwhatsapp.airtel.in:443/gateway/airtel-xchange/basic/whatsapp-manager/v1/template/send"
 
 def sendPromotion(receiver, langId, courseName, courseLink):
-    text1 = "We have a brand new course called *"
+    text1 = "Hey I am Chabo! We have a brand new course called *"
     text2 = "* which is extremely popular in the industry!🤩 You can visit this link "
     text3 = " for more details!🚀"
     if langId != 'en':
